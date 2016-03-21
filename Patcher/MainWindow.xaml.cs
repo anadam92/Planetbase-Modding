@@ -459,7 +459,7 @@ IL_0025: ret
                     {
                         File.Delete("Assembly-CSharp.il");
                         File.Delete("Assembly-CSharp-orig.il");
-                        File.Delete("Assembly-CSharp.res");
+                        File.Delete("Assembly-CSharp-orig.res");
                         File.Delete("fusion.dll");
                         File.Delete("ilasm.exe");
                         File.Delete("ildasm.exe");
