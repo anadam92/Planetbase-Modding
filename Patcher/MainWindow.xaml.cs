@@ -233,14 +233,14 @@ IL_0025: ret
             {
                 this.labelDll.Text = ofd.FileName;
                 this.FrameworkElement_OnSizeChanged(this, null);
-                if (File.Exists(this.labelDll.Text + ".bck"))
+                //if (File.Exists(this.labelDll.Text + ".bck"))
+                //{
+                //    this.buttonRestore.Content = "State: Patched! Click to restore!";
+                //    this.buttonRestore.IsEnabled = true;
+                //}
+                //else
                 {
-                    this.buttonRestore.Content = "State: Patched! Click to restore!";
-                    this.buttonRestore.IsEnabled = true;
-                }
-                else
-                {
-                    this.buttonRestore.Content = "State: Probably Unpatched";
+                    //this.buttonRestore.Content = "State: Probably Unpatched";
                     this.buttonPatch.IsEnabled = true;
                 }
             }
@@ -260,7 +260,7 @@ IL_0025: ret
 
             this.buttonSelect.IsEnabled = false;
             this.buttonPatch.IsEnabled = false;
-            this.buttonRestore.IsEnabled = false;
+            //this.buttonRestore.IsEnabled = false;
 
             this.buttonPatch.Content = "Copying working DLL...";
 
@@ -423,6 +423,10 @@ IL_0025: ret
             this.buttonPatch.Content = "Backing up...";
 
             var bckPath = Path.Combine(Path.GetDirectoryName(this.labelDll.Text), "Assembly-CSharp.dll.bck");
+            if (File.Exists(bckPath))
+            {
+                await this.labelDll.Dispatcher.InvokeAsync(() => { File.Delete(bckPath); });
+            }
             if (!File.Exists(bckPath))
             {
                 await this.labelDll.Dispatcher.InvokeAsync(() => { File.Copy(this.labelDll.Text, bckPath); });
@@ -472,9 +476,9 @@ IL_0025: ret
         {
             File.Delete(this.labelDll.Text);
             File.Move(this.labelDll.Text + ".bck", this.labelDll.Text);
-            this.buttonRestore.Content = "State: Restored to original";
+            //this.buttonRestore.Content = "State: Restored to original";
             this.buttonPatch.IsEnabled = true;
-            this.buttonRestore.IsEnabled = false;
+            //this.buttonRestore.IsEnabled = false;
         }
     }
 }
