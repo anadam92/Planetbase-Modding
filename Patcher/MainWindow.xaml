@@ -12,6 +12,6 @@
         <Button x:Name="buttonPatch" IsEnabled="False" Content="Patch!" HorizontalAlignment="Left" VerticalAlignment="Top" Width="195" Margin="10,34,0,0" Click="ButtonBase2_OnClick"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,81,0,0"><Run Text="v"/><Run Text="1"/><Run Text="."/><Run Text="0"/><Run Text=" by π-Maker"/><Run Text=" &amp;"/><Run Text=" j"/><Run Text="p"/><Run Text="farias"/></TextBlock>
         <!--Button x:Name="buttonRestore" IsEnabled="False" Content="State: Unknown" HorizontalAlignment="Left" VerticalAlignment="Top" Width="195" Margin="10,59,0,0" Click="ButtonBase3_OnClick"/-->
-        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,60,0,0"><Run Text="Compatible with v1.1.0 beta1"/><Run Text="6"/></TextBlock>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,60,0,0" Text="Compatible with v1.1.0"/>
     </Grid>
 </Window>

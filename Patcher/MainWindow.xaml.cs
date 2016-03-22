@@ -20,7 +20,9 @@
         private const string PRE_LOAD_MODS = @"call       void Planetbase.GameManager::initQualitySettings()";
         private const string LOAD_MODS = @"call void Planetbase.GameManager::loadMods()";
 
-        private const string PRE_UPDATE_MODS = @"callvirt   instance void Planetbase.GameState::update(float32)";
+        private const string GAME_STATE_GAME = @".class public auto ansi beforefieldinit Planetbase.GameStateGame";
+        private const string GAME_STATE_GAME_UPDATE = @"update(float32 timeStep) cil managed";
+        private const string PRE_UPDATE_MODS = @"ret";
         private const string UPDATE_MODS = @"call void Planetbase.GameManager::updateMods()";
 
         private const string PRE_MODS_FIELD = @".field public notserialized static class Planetbase.GameManager mInstance";
@@ -315,6 +317,8 @@ IL_0025: ret
             using (var ILStreamNew = new FileStream("Assembly-CSharp.il", FileMode.OpenOrCreate))
             using (var writer = new StreamWriter(ILStreamNew, Encoding.UTF8))
             {
+                bool inGameStateGame = false;
+                bool inUpdate = false;
                 ILStream.Seek(0, SeekOrigin.Begin);
                 while (!reader.EndOfStream)
                 {
@@ -350,10 +354,18 @@ IL_0025: ret
                     }
 
                     // Update mods
-                    if (line.Contains(PRE_UPDATE_MODS))
+                    if (line.Contains(GAME_STATE_GAME))
+                        inGameStateGame = true;
+                    if (inGameStateGame && line.Contains(GAME_STATE_GAME_UPDATE))
+                        inUpdate = true;
+                    if (inUpdate && line.Contains(PRE_UPDATE_MODS))
                     {
+                        line = line.Replace("ret", UPDATE_MODS);
                         await writer.WriteLineAsync(line);
-                        await writer.WriteLineAsync(UPDATE_MODS);
+                        await writer.WriteLineAsync("ret");
+
+                        inGameStateGame = false;
+                        inUpdate = false;
                         continue;
                     }
 
