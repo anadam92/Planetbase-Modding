@@ -22,6 +22,9 @@ namespace AutoAlerts
 
         public void Update()
         {
+            if (ConstructionComponent.findOperational(TypeList<ComponentType, ComponentTypeList>.find<SecurityConsole>()) == null)
+                return;
+
             AlertState state = SecurityManager.getInstance().getAlertState();
 
             // if the state has been changed manually, don't do anything else. Will be activated again if the player sets NoAlert
