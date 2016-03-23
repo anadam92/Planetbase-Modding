@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoAlerts", "AutoAlerts\Au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkipIntro", "SkipIntro\SkipIntro.csproj", "{49482ED2-881E-4525-9717-62468C5C3842}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeBuilding", "FreeBuilding\FreeBuilding.csproj", "{D5BD97EF-8818-4290-8569-00803DDB3DCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{49482ED2-881E-4525-9717-62468C5C3842}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49482ED2-881E-4525-9717-62468C5C3842}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49482ED2-881E-4525-9717-62468C5C3842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
