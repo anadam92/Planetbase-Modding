@@ -10,21 +10,16 @@ namespace SkipIntro
     public class SkipIntro : IMod
     {
         IntroCinemetic m_intro;
-        bool m_isFinished;
 
         public void Init()
         {
             m_intro = null;
-            m_isFinished = false;
 
             Debug.Log("[MOD] SkipIntro activated");
         }
 
         public void Update()
         {
-            if (m_isFinished)
-                return;
-
             if (m_intro == null)
             {
                 m_intro = CameraManager.getInstance().getCinematic() as IntroCinemetic;
@@ -34,17 +29,17 @@ namespace SkipIntro
 
             if (m_intro.mColonyShip.isDone())
             {
-                m_isFinished = true;
+                m_intro = null;
                 return;
             }
 
+            // Disable menu
+            GameStateGame gameState = GameManager.getInstance().getGameState() as GameStateGame;
+            if (gameState.mGameGui.getWindow() is GuiGameMenu)
+                gameState.mGameGui.setWindow(null);
+
             if (Input.GetKeyUp(KeyCode.Escape))
             {
-                // Disable menu
-                GameStateGame gameState = GameManager.getInstance().getGameState() as GameStateGame;
-                if (gameState.mGameGui.getWindow() is GuiGameMenu)
-                    gameState.mGameGui.setWindow(null);
-
                 if (CameraManager.getInstance().getCinematic() != null)
                 {
                     Vector3 shipLandingPosition;
