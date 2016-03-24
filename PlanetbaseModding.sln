@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkipIntro", "SkipIntro\Skip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeBuilding", "FreeBuilding\FreeBuilding.csproj", "{D5BD97EF-8818-4290-8569-00803DDB3DCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraOverhaul", "CameraOverhaul\CameraOverhaul.csproj", "{26C96371-5788-498B-99EF-2CC556C9A7D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5BD97EF-8818-4290-8569-00803DDB3DCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26C96371-5788-498B-99EF-2CC556C9A7D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26C96371-5788-498B-99EF-2CC556C9A7D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26C96371-5788-498B-99EF-2CC556C9A7D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26C96371-5788-498B-99EF-2CC556C9A7D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
