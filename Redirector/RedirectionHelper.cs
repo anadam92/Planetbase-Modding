@@ -16,6 +16,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+The original can be found at https://github.com/sschoener/cities-skylines-detour
+
+This version has been converted to work with Unity 32-bit. 
 */
 
 using System;
@@ -31,7 +35,7 @@ namespace Redirection
     }
 
     /// <summary>
-    /// Helper class to deal with detours. This version is for Unity 5 x64 on Windows.
+    /// Helper class to deal with detours. This version is for Unity 5 x32 on Windows.
     /// We provide three different methods of detouring.
     /// </summary>
     public static class RedirectionHelper
