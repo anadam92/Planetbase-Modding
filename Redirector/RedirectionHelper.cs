@@ -19,7 +19,7 @@ THE SOFTWARE.
 
 The original can be found at https://github.com/sschoener/cities-skylines-detour
 
-This version has been converted to work with Unity 32-bit. 
+This version has been converted to work with Unity 32-bit, with the help of Sebastian Schöner.
 */
 
 using System;
@@ -30,8 +30,8 @@ namespace Redirection
 
     public struct RedirectCallsState
     {
-        public byte a, b, c, d, e;
-        public uint f;
+        public byte a, b, c, d;
+        public uint e;
     }
 
     /// <summary>
@@ -82,18 +82,16 @@ namespace Redirection
             {
                 byte* sitePtr = (byte*)site.ToPointer();
                 state.a = *sitePtr;
-                state.b = *(sitePtr + 1);
+                state.b = *(sitePtr + 5);
                 state.c = *(sitePtr + 6);
                 state.d = *(sitePtr + 7);
-                state.e = *(sitePtr + 8);
-                state.f = *((uint*)(sitePtr + 2));
+                state.e = *((uint*)(sitePtr + 1));
 
-                *sitePtr = 0x49; // mov r11, target
-                *(sitePtr + 1) = 0xBB;
-                *((uint*)(sitePtr + 2)) = (uint)target.ToInt32();
-                *(sitePtr + 6) = 0x41; // jmp r11
-                *(sitePtr + 7) = 0xFF;
-                *(sitePtr + 8) = 0xE3;
+                *sitePtr = 0xBB; // mov EBX, target
+                *((uint*)(sitePtr + 1)) = (uint)target.ToInt32();
+                *(sitePtr + 5) = 0x41; // jmp EBX
+                *(sitePtr + 6) = 0xFF;
+                *(sitePtr + 7) = 0xE3;
             }
 
             return state;
@@ -104,12 +102,11 @@ namespace Redirection
             unsafe
             {
                 byte* sitePtr = (byte*)site.ToPointer();
-                *sitePtr = state.a; // mov r11, target
-                *(sitePtr + 1) = state.b;
-                *((uint*)(sitePtr + 2)) = state.f;
-                *(sitePtr + 6) = state.c; // jmp r11
+                *sitePtr = state.a; // mov EBX, target
+                *((uint*)(sitePtr + 1)) = state.e;
+                *(sitePtr + 5) = state.b; // jmp EBX
+                *(sitePtr + 6) = state.c;
                 *(sitePtr + 7) = state.d;
-                *(sitePtr + 8) = state.e;
             }
         }
 
