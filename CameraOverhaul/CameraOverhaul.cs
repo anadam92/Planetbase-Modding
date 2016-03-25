@@ -18,82 +18,277 @@ namespace CameraOverhaul
 
         public void Update()
         {
-            
         }
     }
 
     public abstract class CustomCameraManager : CameraManager
     {
+        // These are not const so other mods can change them if they want
+        public static float MIN_HEIGHT = 12f;
+        public static float MAX_HEIGHT = 120f;
+
+        private static float mVerticalRotationAcceleration = 0f;
+        private static float mPreviousMouseY = 0f;
+
+        private static float mAlternateRotationAcceleration = 0f;
+
+        private static Plane mGroundPlane = new Plane(Vector3.up, new Vector3(TerrainGenerator.TotalSize, 0f, TerrainGenerator.TotalSize) * 0.5f);
+
+        private static int mModulesize = 0;
+        private static bool mIsPlacingModule = false;
+
         [RedirectFrom(typeof(CameraManager))]
         public new void update(float timeStep)
         {
-            if (this.mZoomAxis == 0f)
-            {
-                this.mZoomAxis = Input.GetAxis("Zoom");
-            }
+            if (mZoomAxis == 0f)
+                mZoomAxis = Input.GetAxis("Zoom");
+
             GameState gameState = GameManager.getInstance().getGameState();
-            if (gameState != null && !gameState.isCameraFixed() && !this.mLocked)
+            if (gameState != null && !gameState.isCameraFixed())
             {
-                if (this.mCinematic == null)
+                if (mCinematic == null)
                 {
-                    float x = this.mAcceleration.x;
-                    float num = this.mAcceleration.z;
-                    if (Mathf.Abs(this.mAcceleration.y) > 0.01f)
+                    GameStateGame game = gameState as GameStateGame;
+                    if (game != null && game.mMode == GameStateGame.Mode.PlacingModule && mIsPlacingModule)
                     {
-                        float num2 = Mathf.Clamp(60f * timeStep, 0.01f, 100f);
-                        float num3 = Mathf.Clamp(this.mCurrentHeight + this.mAcceleration.y * num2, 12f, 100f);
-                        num += (this.mCurrentHeight - num3) / num2;
-                        this.mCurrentHeight = num3;
-                        this.mTargetHeight = this.mCurrentHeight;
+                        game.mCurrentModuleSize = mModulesize;
                     }
-                    Transform transform = this.mMainCamera.transform;
-                    if (Mathf.Abs(num) > 0.01f && Mathf.Abs(num) > 0.001f)
+
+                    Transform transform = mMainCamera.transform;
+
+                    float xAxis = mAcceleration.x;
+                    float yAxis = mAcceleration.y;
+                    float zAxis = mAcceleration.z;
+                    float absXAxis = Mathf.Abs(xAxis);
+                    float absYAxis = Mathf.Abs(yAxis);
+                    float absZAxis = Mathf.Abs(zAxis);
+
+                    if (!mLocked)
                     {
-                        transform.position += new Vector3(transform.forward.x, 0f, transform.forward.z) * num * timeStep * 80f;
+                        // if zooming
+                        if (absYAxis > 0.01f)
+                        {
+                            float speed = Mathf.Clamp(60f * timeStep, 0.01f, 100f);
+                            float newHeight = Mathf.Clamp(mCurrentHeight + yAxis * speed, MIN_HEIGHT, MAX_HEIGHT);
+
+                            if (transform.eulerAngles.x < 86f)
+                            {
+                                zAxis += (mCurrentHeight - newHeight) / speed;
+                                absZAxis = Mathf.Abs(zAxis);
+                            }
+
+                            mCurrentHeight = newHeight;
+                            mTargetHeight = mCurrentHeight;
+                        }
+
+                        // Move forwards
+                        if (absZAxis > 0.001f)
+                        {
+                            transform.position += new Vector3(transform.forward.x, 0f, transform.forward.z).normalized * zAxis * timeStep * 80f;
+                        }
+
+                        // Move sideways
+                        if (absXAxis > 0.001f)
+                        {
+                            transform.position += new Vector3(transform.right.x, 0f, transform.right.z).normalized * xAxis * timeStep * 80f;
+                        }
+
+                        // rotate around cam
+                        Vector3 eulerAngles = transform.eulerAngles;
+                        if (Mathf.Abs(mRotationAcceleration) > 0.01f)
+                        {
+                            eulerAngles.y += mRotationAcceleration * timeStep * 120f;
+                        }
+
+                        if (Mathf.Abs(mVerticalRotationAcceleration) > 0.01f)
+                        {
+                            eulerAngles.x = Mathf.Clamp(eulerAngles.x - mVerticalRotationAcceleration * timeStep * 120f, 20f, 87f);
+                        }
+                        transform.eulerAngles = eulerAngles;
                     }
-                    if (Mathf.Abs(x) > 0.01f && Mathf.Abs(x) > 0.001f)
+
+                    // rotate around world
+                    if (Mathf.Abs(mAlternateRotationAcceleration) > 0.01f)
                     {
-                        transform.position += new Vector3(transform.right.x, 0f, transform.right.z) * x * timeStep * 80f;
+                        Ray ray = new Ray(transform.position, transform.forward);
+                        float dist;
+                        if (mGroundPlane.Raycast(ray, out dist))
+                        {
+                            transform.RotateAround(transform.position + transform.forward * dist, Vector3.up, mAlternateRotationAcceleration * timeStep * 120f);
+                        }
                     }
-                    if (Mathf.Abs(this.mRotationAcceleration) > 0.01f)
+
+                    // if we moved, set the correct height
+                    if (!mLocked && (absZAxis > 0.001f || absXAxis > 0.001f || absYAxis > 0.01f))
                     {
-                        transform.RotateAround(this.mMainCamera.transform.position, new Vector3(0f, 1f, 0f), this.mRotationAcceleration * timeStep * 120f);
+                        placeOnFloor(mCurrentHeight);
                     }
-                    Vector3 vector = new Vector3(2000f, 0f, 2000f) * 0.5f;
-                    Vector3 vector2 = this.mMainCamera.transform.position - vector;
-                    float magnitude = vector2.magnitude;
-                    if (magnitude > 375f)
+
+                    // Calc map center and distance
+                    Vector3 mapCenter = new Vector3(TerrainGenerator.TotalSize, 0f, TerrainGenerator.TotalSize) * 0.5f;
+                    Vector3 mapCenterToCam = transform.position - mapCenter;
+                    float distToMapCenter = mapCenterToCam.magnitude;
+
+                    // limit cam to 375 units from center
+                    if (distToMapCenter > 375f)
                     {
-                        this.mMainCamera.transform.position = vector + vector2.normalized * 750f * 0.5f;
-                    }
-                    if (Mathf.Abs(num) > 0.001f || Mathf.Abs(x) > 0.001f || this.mZoomLocked)
-                    {
-                        this.placeOnFloor(this.mCurrentHeight);
-                        Vector3 eulerAngles = this.mMainCamera.transform.rotation.eulerAngles;
-                        eulerAngles.x = 25f;
-                        this.mMainCamera.transform.rotation = Quaternion.Euler(eulerAngles);
+                        mMainCamera.transform.position = mapCenter + mapCenterToCam.normalized * 375f;
                     }
                 }
                 else
                 {
-                    this.updateCinematic(timeStep);
+                    updateCinematic(timeStep);
                 }
             }
-            if (this.mCameraTransition < 1f)
+
+            // interpolate the position when the game moves the camera to a specific location (e.g when editing a building)
+            if (mCameraTransition < 1f)
             {
-                if (this.mTransitionTime == 0f)
+                if (mTransitionTime == 0f)
                 {
-                    this.mCameraTransition = 1f;
+                    mCameraTransition = 1f;
                 }
                 else
                 {
-                    float num4 = timeStep / this.mTransitionTime;
-                    this.mCameraTransition += num4;
+                    float num4 = timeStep / mTransitionTime;
+                    mCameraTransition += num4;
                 }
-                this.mCurrentTransform.interpolate(this.mSourceTransform, this.mTargetTransform, this.mCameraTransition);
-                this.mCurrentTransform.apply(this.mMainCamera.transform);
+                mCurrentTransform.interpolate(mSourceTransform, mTargetTransform, mCameraTransition);
+                mCurrentTransform.apply(mMainCamera.transform);
             }
-            this.mSkydomeCamera.transform.rotation = this.mMainCamera.transform.rotation;
+
+            mSkydomeCamera.transform.rotation = mMainCamera.transform.rotation;
+        }
+
+        [RedirectFrom(typeof(CameraManager))]
+        public new void fixedUpdate(float timeStep, int frameIndex)
+        {
+            if (this.mCinematic == null)
+            {
+                float lateralMoveSpeed = timeStep * 6f;
+                float zoomAndRotationSpeed = timeStep * 10f;
+
+                GameState gameState = GameManager.getInstance().getGameState();
+
+                // this only happens when placing a module and only if current height < 21
+                if (mTargetHeight != mCurrentHeight)
+                {
+                    mCurrentHeight += Mathf.Sign(mTargetHeight - mCurrentHeight) * timeStep * 30f;
+                    if (Mathf.Abs(mCurrentHeight - mTargetHeight) < 0.5f)
+                    {
+                        mCurrentHeight = mTargetHeight;
+                    }
+                }
+
+
+                if (gameState != null && !gameState.isCameraFixed() && !TimeManager.getInstance().isPaused())
+                {
+                    KeyBindingManager keyBindingManager = KeyBindingManager.getInstance();
+                    GameStateGame game = gameState as GameStateGame;
+                    if (game != null && game.mMode == GameStateGame.Mode.PlacingModule)
+                    {
+                        if (!mIsPlacingModule)
+                        {
+                            mIsPlacingModule = true;
+                            mModulesize = game.mCurrentModuleSize;
+                        }
+
+                        // we're zooming
+                        if (Mathf.Abs(mZoomAxis) > 0.001f || Mathf.Abs(keyBindingManager.getCompositeAxis(ActionType.CameraZoomOut, ActionType.CameraZoomIn)) > 0.001f)
+                        {
+                            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                            {
+                                if (mZoomAxis <= -0.1f || keyBindingManager.getBinding(ActionType.CameraZoomOut).justUp())
+                                {
+                                    if (mModulesize > game.mPlacedModuleType.getMinSize())
+                                    {
+                                        mModulesize--;
+                                    }
+                                }
+                                else if ((mZoomAxis >= 0.1f || keyBindingManager.getBinding(ActionType.CameraZoomIn).justUp()) && mModulesize < game.mPlacedModuleType.getMaxSize())
+                                {
+                                    mModulesize++;
+                                }
+                            }
+                        }
+
+                        game.mCurrentModuleSize = mModulesize;
+                    }
+                    else
+                    {
+                        mIsPlacingModule = false;
+                    }
+
+                    mAcceleration.x += keyBindingManager.getCompositeAxis(ActionType.CameraMoveLeft, ActionType.CameraMoveRight) * lateralMoveSpeed;
+                    mAcceleration.z += keyBindingManager.getCompositeAxis(ActionType.CameraMoveBack, ActionType.CameraMoveForward) * lateralMoveSpeed;
+
+                    if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+                    {
+                        mAcceleration.y -= mZoomAxis * zoomAndRotationSpeed;
+                        mAcceleration.y -= keyBindingManager.getCompositeAxis(ActionType.CameraZoomOut, ActionType.CameraZoomIn) * zoomAndRotationSpeed;
+                    }
+
+                    mAlternateRotationAcceleration -= keyBindingManager.getCompositeAxis(ActionType.CameraRotateLeft, ActionType.CameraRotateRight) * zoomAndRotationSpeed;
+
+                    // Rotate with middle mouse button
+                    if (Input.GetMouseButton(2))
+                    {
+                        float mouseDeltaX = Input.mousePosition.x - mPreviousMouseX;
+                        if (Mathf.Abs(mouseDeltaX) > Mathf.Epsilon)
+                            mRotationAcceleration += zoomAndRotationSpeed * mouseDeltaX * 0.1f;
+
+                        float mouseDeltaY = Input.mousePosition.y - mPreviousMouseY;
+                        if (Mathf.Abs(mouseDeltaY) > Mathf.Epsilon)
+                            mVerticalRotationAcceleration += zoomAndRotationSpeed * mouseDeltaY * 0.1f;
+                    }
+
+                    // Move with mouse on screen borders
+                    if (!Application.isEditor)
+                    {
+                        float screenBorder = Screen.height * 0.01f;
+                        if (Input.mousePosition.x < screenBorder)
+                        {
+                            mAcceleration.x = mAcceleration.x - lateralMoveSpeed;
+                        }
+                        else if (Input.mousePosition.x > Screen.width - screenBorder)
+                        {
+                            mAcceleration.x = mAcceleration.x + lateralMoveSpeed;
+                        }
+                        if (Input.mousePosition.y < screenBorder)
+                        {
+                            mAcceleration.z = mAcceleration.z - lateralMoveSpeed;
+                        }
+                        else if (Input.mousePosition.y > Screen.height - screenBorder)
+                        {
+                            mAcceleration.z = mAcceleration.z + lateralMoveSpeed;
+                        }
+                    }
+
+                    float clampSpeed = !Input.GetKey(KeyCode.LeftShift) ? 1f : 0.25f;
+                    mAcceleration.x = Mathf.Clamp(mAcceleration.x - mAcceleration.x * lateralMoveSpeed, -clampSpeed, clampSpeed);
+                    mAcceleration.z = Mathf.Clamp(mAcceleration.z - mAcceleration.z * lateralMoveSpeed, -clampSpeed, clampSpeed);
+                    mAcceleration.y = Mathf.Clamp(mAcceleration.y - mAcceleration.y * zoomAndRotationSpeed, -clampSpeed, clampSpeed);
+                    mRotationAcceleration = Mathf.Clamp(mRotationAcceleration - mRotationAcceleration * zoomAndRotationSpeed, -clampSpeed, clampSpeed);
+                    mVerticalRotationAcceleration = Mathf.Clamp(mVerticalRotationAcceleration - mVerticalRotationAcceleration * zoomAndRotationSpeed, -clampSpeed, clampSpeed);
+                    mAlternateRotationAcceleration = Mathf.Clamp(mAlternateRotationAcceleration - mAlternateRotationAcceleration * zoomAndRotationSpeed, -clampSpeed, clampSpeed);
+                }
+                else
+                {
+                    mAcceleration = Vector3.zero;
+                    mRotationAcceleration = 0f;
+                    mVerticalRotationAcceleration = 0f;
+                    mAlternateRotationAcceleration = 0f;
+                }
+
+                mPreviousMouseX = Input.mousePosition.x;
+                mPreviousMouseY = Input.mousePosition.y;
+            }
+            else
+            {
+                mCinematic.fixedUpdate(timeStep);
+            }
+
+            mZoomAxis = 0f;
         }
     }
 }
