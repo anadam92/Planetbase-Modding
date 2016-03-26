@@ -36,13 +36,23 @@ namespace AutoConnections
                     this.mCost = null;
 
                     // Add available connections
+                    List<Module> linkableModules = new List<Module>();
                     for (int i = 0; i < Module.mModules.Count; i++)
                     {
                         Module module = Module.mModules[i];
                         if (module != null && module != this.mActiveModule && Connection.canLink(mActiveModule, module, mActiveModule.getPosition(), module.getPosition()))
                         {
-                            Module.linkModules(mActiveModule, module, mRenderTops);
+                            linkableModules.Add(module);
                         }
+
+                        // if we already have 2 possible links, we already we know we can't connect so stop now
+                        if (linkableModules.Count == 2)
+                            break;
+                    }
+
+                    if (linkableModules.Count == 1)
+                    {
+                        Module.linkModules(mActiveModule, linkableModules[0], mRenderTops);
                     }
 
                     this.onModulePlacementEnd();
