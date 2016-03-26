@@ -98,7 +98,11 @@ as the name has to be correct!
       are shut down according to this list, until the base consumes
       less than it's producing.
       It will only go back to a saving mode when it reaches half the
-      percentage of the last tier.-->
+      percentage of the last tier.
+      All modules that consume power/water have to be in the respective list.
+      If any is missing, it will be added to the beginning and therefore
+      will be the first to shut down.
+  -->
   <PriorityLists>
     <PowerList>
       <Module>BasePad</Module>

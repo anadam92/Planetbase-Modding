@@ -14,6 +14,45 @@ namespace PowerSaver
         public static string PRIORITY_LIST_PATH = @"Mods\Settings\PowerSaver.xml";
         public static string CONSOLE_ICON_PATH = @"Mods\Textures\GridManagementConsoleIcon.png";
 
+        public static List<Type> DEFAULT_POWER_PRIORITY_LIST = new Type[]
+        {
+            typeof(ModuleTypeBasePad),
+            typeof(ModuleTypeSignpost),
+            typeof(ModuleTypeStarport),
+            typeof(ModuleTypeLandingPad),
+            typeof(ModuleTypeRadioAntenna),
+            typeof(ModuleTypeStorage),
+            typeof(ModuleTypeRoboticsFacility),
+            typeof(ModuleTypeMine),
+            typeof(ModuleTypeFactory),
+            typeof(ModuleTypeProcessingPlant),
+            typeof(ModuleTypeLab),
+            typeof(ModuleTypeWaterTank),
+            typeof(ModuleTypeBar),
+            typeof(ModuleTypeMultiDome),
+            typeof(ModuleTypeAntiMeteorLaser),
+            typeof(ModuleTypeTelescope),
+            typeof(ModuleTypeControlCenter),
+            typeof(ModuleTypeDorm),
+            typeof(ModuleTypeCabin),
+            typeof(ModuleTypeSickBay),
+            typeof(ModuleTypeCanteen),
+            typeof(ModuleTypeBioDome),
+            typeof(ModuleTypeAirlock),
+            typeof(ModuleTypeOxygenGenerator),
+            typeof(ModuleTypeWaterExtractor)
+        }.ToList();
+
+        public static List<Type> DEFAULT_WATER_PRIORITY_LIST = new Type[]
+        {
+            typeof(ModuleTypeLab),
+            typeof(ModuleTypeBar),
+            typeof(ModuleTypeMultiDome),
+            typeof(ModuleTypeCanteen),
+            typeof(ModuleTypeBioDome),
+            typeof(ModuleTypeOxygenGenerator)
+        }.ToList();
+
         public class SavingMode
         {
             public int trigger;
@@ -147,10 +186,16 @@ namespace PowerSaver
             mOutOfPower = false;
             mOutOfWater = false;
 
-            foreach (var item in mPowerSavingModes)
+            foreach (Type type in DEFAULT_POWER_PRIORITY_LIST)
             {
-                Debug.Log("Trigger: " + item.trigger);
-                Debug.Log("Count: " + item.typesToShutDown.Count);
+                if (!mPowerPriorityList.Contains(type))
+                    mPowerPriorityList.Insert(0, type);
+            }
+
+            foreach (Type type in DEFAULT_WATER_PRIORITY_LIST)
+            {
+                if (!mWaterPriorityList.Contains(type))
+                    mWaterPriorityList.Insert(0, type);
             }
 
             TypeList<ComponentType, ComponentTypeList>.getInstance().add(new GridManagementConsole());
