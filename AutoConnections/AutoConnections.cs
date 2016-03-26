@@ -36,23 +36,13 @@ namespace AutoConnections
                     this.mCost = null;
 
                     // Add available connections
-                    List<Module> linkableModules = new List<Module>();
                     for (int i = 0; i < Module.mModules.Count; i++)
                     {
                         Module module = Module.mModules[i];
                         if (module != null && module != this.mActiveModule && Connection.canLink(mActiveModule, module, mActiveModule.getPosition(), module.getPosition()))
                         {
-                            linkableModules.Add(module);
+                            Module.linkModules(mActiveModule, module, mRenderTops);
                         }
-                    }
-
-                    foreach (Module module in linkableModules)
-                    {
-                        Connection connection = Connection.create(mActiveModule, module);
-                        connection.onUserPlaced();
-                        connection.setRenderTop(mRenderTops);
-                        mActiveModule.recycleLinkComponents();
-                        module.recycleLinkComponents();
                     }
 
                     this.onModulePlacementEnd();
