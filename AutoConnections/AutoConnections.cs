@@ -44,15 +44,18 @@ namespace AutoConnections
                         {
                             linkableModules.Add(module);
                         }
-
-                        // if we already have 2 possible links, we already we know we can't connect so stop now
-                        if (linkableModules.Count == 2)
-                            break;
                     }
 
-                    if (linkableModules.Count == 1)
+                    if (!mActiveModule.hasFlag(ModuleType.FlagDeadEnd) || linkableModules.Count == 1)
                     {
-                        Module.linkModules(mActiveModule, linkableModules[0], mRenderTops);
+                        foreach (Module module in linkableModules)
+                        {
+                            Connection connection = Connection.create(mActiveModule, module);
+                            connection.onUserPlaced();
+                            connection.setRenderTop(mRenderTops);
+                            mActiveModule.recycleLinkComponents();
+                            module.recycleLinkComponents();
+                        }
                     }
 
                     this.onModulePlacementEnd();

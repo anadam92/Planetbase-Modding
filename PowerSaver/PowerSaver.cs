@@ -69,8 +69,6 @@ namespace PowerSaver
         public static List<SavingMode> mWaterSavingModes;
         public static SavingMode mActivePowerSavingMode;
         public static SavingMode mActiveWaterSavingMode;
-        public static bool mOutOfPower;
-        public static bool mOutOfWater;
 
         public static List<Type> mPowerPriorityList;
         public static List<Type> mWaterPriorityList;
@@ -183,8 +181,6 @@ namespace PowerSaver
             mWaterSavingModes = mWaterSavingModes.OrderBy(m => m.trigger).ToList();
             mActivePowerSavingMode = null;
             mActiveWaterSavingMode = null;
-            mOutOfPower = false;
-            mOutOfWater = false;
 
             foreach (Type type in DEFAULT_POWER_PRIORITY_LIST)
             {
@@ -210,77 +206,55 @@ namespace PowerSaver
 
         public void Update()
         {
-            if (ConstructionComponent.findOperational(TypeList<ComponentType, ComponentTypeList>.find<GridManagementConsole>()) == null)
+            bool consoleExists = false;
+            foreach (ConstructionComponent component in ConstructionComponent.mComponents)
+            {
+                bool lowCondition = component.mConditionIndicator.isValidValue() && component.mConditionIndicator.isExtremelyLow();
+                if (component.getComponentType().GetType() == typeof(GridManagementConsole) && component.isBuilt() && !lowCondition && component.isEnabled() &&
+                    component.mParentConstruction.isBuilt() && component.mParentConstruction.isEnabled() && !component.mParentConstruction.isExtremelyDamaged())
+                {
+                    consoleExists = true;
+                    break;
+                }
+            }
+
+            if (!consoleExists)
                 return;
 
             Grid grid = Grid.getLargest();
             if (grid == null)
                 return;
 
-            if (mPowerSavingModes.Count > 0 && GetTotalConsumption(grid, GridResource.Power) > grid.getTotalPowerGeneration() && Module.getOverallPowerStorageCapacity() > 0f)
+            if (mPowerSavingModes.Count > 0 && Module.getOverallPowerStorageCapacity() > 0f && (GetTotalConsumption(grid, GridResource.Power) > grid.getTotalPowerGeneration() || mActivePowerSavingMode != null))
             {
                 float powerPercentage = (float)Module.getOverallPowerStorage() / Module.getOverallPowerStorageCapacity() * 100f;
-                if (powerPercentage == 0f)
+                
+                SavingMode newSavingMode = mPowerSavingModes.FirstOrDefault(m => powerPercentage < m.trigger);
+                if (newSavingMode != mActivePowerSavingMode)
                 {
-                    mOutOfPower = true;
-                    SwitchSavingMode(null, GridResource.Power);
-                }
-                else if (powerPercentage > mPowerSavingModes[0].trigger * 0.5f)
-                {
-                    mOutOfPower = false;
-                }
+                    bool dontSwitch = false;
+                    if (mActivePowerSavingMode != null && (newSavingMode == null || newSavingMode.trigger > mActivePowerSavingMode.trigger))
+                        dontSwitch = powerPercentage < mActivePowerSavingMode.trigger * 1.2f;
 
-                if (!mOutOfPower)
-                {
-                    SavingMode newSavingMode = mPowerSavingModes.FirstOrDefault(m => powerPercentage < m.trigger);
-                    if (newSavingMode != mActivePowerSavingMode)
-                    {
-                        bool dontSwitch = false;
-                        if (mActivePowerSavingMode != null && (newSavingMode == null || newSavingMode.trigger > mActivePowerSavingMode.trigger))
-                            dontSwitch = powerPercentage < mActivePowerSavingMode.trigger * 1.2f;
-
-                        if (!dontSwitch)
-                            SwitchSavingMode(newSavingMode, GridResource.Power);
-                    }
+                    if (!dontSwitch)
+                        SwitchSavingMode(newSavingMode, GridResource.Power);
                 }
             }
-            else
-            {
-                // stop saving
-                SwitchSavingMode(null, GridResource.Power);
-            }
 
-            if (mWaterSavingModes.Count > 0 && GetTotalConsumption(grid, GridResource.Water) > grid.getData(GridResource.Water).getGeneration() && Module.getOverallWaterStorageCapacity() > 0f)
+            if (mWaterSavingModes.Count > 0 && Module.getOverallWaterStorageCapacity() > 0f && (GetTotalConsumption(grid, GridResource.Water) > grid.getData(GridResource.Water).getGeneration() || mActiveWaterSavingMode != null))
             {
                 float waterPercentage = (float)Module.getOverallWaterStorage() / Module.getOverallWaterStorageCapacity() * 100;
-                if (waterPercentage == 0f)
-                {
-                    mOutOfWater = true;
-                    SwitchSavingMode(null, GridResource.Water);
-                }
-                else if (waterPercentage > mWaterSavingModes[0].trigger * 0.5f)
-                {
-                    mOutOfWater = false;
-                }
 
-                if (!mOutOfWater)
+                SavingMode newSavingMode = mWaterSavingModes.FirstOrDefault(m => waterPercentage < m.trigger);
+                if (newSavingMode != mActiveWaterSavingMode)
                 {
-                    SavingMode newSavingMode = mWaterSavingModes.FirstOrDefault(m => waterPercentage < m.trigger);
-                    if (newSavingMode != mActiveWaterSavingMode)
-                    {
-                        bool dontSwitch = false;
-                        if (mActiveWaterSavingMode != null && (newSavingMode == null || newSavingMode.trigger > mActiveWaterSavingMode.trigger))
-                            dontSwitch = waterPercentage < mActiveWaterSavingMode.trigger * 1.2f;
+                    bool dontSwitch = false;
+                    if (mActiveWaterSavingMode != null && (newSavingMode == null || newSavingMode.trigger > mActiveWaterSavingMode.trigger))
+                        dontSwitch = waterPercentage < mActiveWaterSavingMode.trigger * 1.2f;
 
-                        if (!dontSwitch)
-                            SwitchSavingMode(newSavingMode, GridResource.Water);
-                    }
+                    if (!dontSwitch)
+                        SwitchSavingMode(newSavingMode, GridResource.Water);
                 }
-            }
-            else
-            {
-                // stop saving
-                SwitchSavingMode(null, GridResource.Water);
             }
         }
 
@@ -350,10 +324,22 @@ namespace PowerSaver
         [RedirectFrom(typeof(Grid))]
         public new void calculateBalance(GridResource gridResource)
         {
-            if (ConstructionComponent.findOperational(TypeList<ComponentType, ComponentTypeList>.find<GridManagementConsole>()) == null)
-                basicCalculateBalance(gridResource);
-            else
+            bool consoleExists = false;
+            foreach (ConstructionComponent component in ConstructionComponent.mComponents)
+            {
+                bool lowCondition = component.mConditionIndicator.isValidValue() && component.mConditionIndicator.isExtremelyLow();
+                if (component.getComponentType().GetType() == typeof(GridManagementConsole) && component.isBuilt() && !lowCondition && component.isEnabled() &&
+                    component.mParentConstruction.isBuilt() && component.mParentConstruction.isEnabled() && !component.mParentConstruction.isExtremelyDamaged())
+                {
+                    consoleExists = true;
+                    break;
+                }
+            }
+
+            if (consoleExists)
                 advancedCalculateBalance(gridResource);
+            else
+                basicCalculateBalance(gridResource);
         }
 
         public void advancedCalculateBalance(GridResource gridResource)
