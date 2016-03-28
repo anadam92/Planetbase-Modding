@@ -106,6 +106,25 @@ namespace CameraOverhaul
                         }
                         transform.eulerAngles = eulerAngles;
                     }
+                    else if (absYAxis > 0.01f)
+                    {
+                        float speed = Mathf.Clamp(60f * timeStep, 0.01f, 100f);
+                        Vector3 movement = transform.forward * speed * -yAxis;
+
+                        Vector3 planePoint = Selection.getSelectedConstruction().getPosition();
+                        planePoint.y = yAxis < 0f ? 4f : Selection.getSelectedConstruction().getRadius() + 10f;
+                        Plane plane = new Plane(Vector3.up, planePoint);
+
+                        Ray ray = new Ray(transform.position, yAxis < 0f ? transform.forward : -transform.forward);
+                        float dist;
+                        if (plane.Raycast(ray, out dist))
+                        {
+                            if (dist < movement.magnitude)
+                                movement *= dist / movement.magnitude;
+
+                            transform.position += movement;
+                        }
+                    }
 
                     // rotate around world
                     if (Mathf.Abs(mAlternateRotationAcceleration) > 0.01f)
