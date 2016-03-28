@@ -229,12 +229,12 @@ namespace PowerSaver
             {
                 float powerPercentage = (float)Module.getOverallPowerStorage() / Module.getOverallPowerStorageCapacity() * 100f;
                 
-                SavingMode newSavingMode = mPowerSavingModes.FirstOrDefault(m => powerPercentage < m.trigger);
+                SavingMode newSavingMode = mPowerSavingModes.FirstOrDefault(m => powerPercentage <= m.trigger);
                 if (newSavingMode != mActivePowerSavingMode)
                 {
                     bool dontSwitch = false;
                     if (mActivePowerSavingMode != null && (newSavingMode == null || newSavingMode.trigger > mActivePowerSavingMode.trigger))
-                        dontSwitch = powerPercentage < mActivePowerSavingMode.trigger * 1.2f;
+                        dontSwitch = powerPercentage < Mathf.Min(mActivePowerSavingMode.trigger * 1.2f, 100f);
 
                     if (!dontSwitch)
                         SwitchSavingMode(newSavingMode, GridResource.Power);
@@ -245,12 +245,12 @@ namespace PowerSaver
             {
                 float waterPercentage = (float)Module.getOverallWaterStorage() / Module.getOverallWaterStorageCapacity() * 100;
 
-                SavingMode newSavingMode = mWaterSavingModes.FirstOrDefault(m => waterPercentage < m.trigger);
+                SavingMode newSavingMode = mWaterSavingModes.FirstOrDefault(m => waterPercentage <= m.trigger);
                 if (newSavingMode != mActiveWaterSavingMode)
                 {
                     bool dontSwitch = false;
                     if (mActiveWaterSavingMode != null && (newSavingMode == null || newSavingMode.trigger > mActiveWaterSavingMode.trigger))
-                        dontSwitch = waterPercentage < mActiveWaterSavingMode.trigger * 1.2f;
+                        dontSwitch = waterPercentage < Mathf.Min(mActiveWaterSavingMode.trigger * 1.2f, 100f);
 
                     if (!dontSwitch)
                         SwitchSavingMode(newSavingMode, GridResource.Water);
