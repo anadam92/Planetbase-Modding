@@ -553,6 +553,7 @@ namespace PowerSaver
             this.mOperatorSpecialization = TypeList<Specialization, SpecializationList>.find<Engineer>();
             this.mFlags = 264;
             this.mSurveyedConstructionCount = 20;
+            this.mPrefabName = "PrefabRadioConsole";
 
             string language = Profile.getInstance().getLanguage();
             if (language == "en")
@@ -578,8 +579,6 @@ namespace PowerSaver
                 tex.LoadImage(iconBytes);
                 this.mIcon = Util.applyColor(tex);
             }
-
-            this.mModel = ComponentType.loadPrefabPath("Prefabs/Components/PrefabRadioConsole");
         }
     }
 }
