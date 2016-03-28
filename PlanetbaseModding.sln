@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerSaver", "PowerSaver\Po
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingAligner", "BuildingAligner\BuildingAligner.csproj", "{5FA97C37-03E9-497F-83C4-7409185DB055}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeFurnishing", "FreeFurnishing\FreeFurnishing.csproj", "{E812D7C8-7ED5-449B-8F59-E4F2F39E541B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{5FA97C37-03E9-497F-83C4-7409185DB055}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FA97C37-03E9-497F-83C4-7409185DB055}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FA97C37-03E9-497F-83C4-7409185DB055}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E812D7C8-7ED5-449B-8F59-E4F2F39E541B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E812D7C8-7ED5-449B-8F59-E4F2F39E541B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E812D7C8-7ED5-449B-8F59-E4F2F39E541B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E812D7C8-7ED5-449B-8F59-E4F2F39E541B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
