@@ -440,7 +440,8 @@ namespace PowerSaver
 
                 // if we reach this point, we still don't have a positive balance
                 // and the only module active is the control center with the grid management console
-                setResourceAvailable(consoleModule, gridResource, false);
+                if (consoleModule != null)
+                    setResourceAvailable(consoleModule, gridResource, false);
             }
         }
 
