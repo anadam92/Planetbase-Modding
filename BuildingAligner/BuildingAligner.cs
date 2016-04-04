@@ -103,6 +103,8 @@ namespace BuildingAligner
 
                 Vector3 modulePos = module.getPosition();
 
+                bool connectionAvailable = false;
+
                 int count = 0;
                 List<Vector3> positions = GetPositionsAroundModule(module);
                 foreach (Vector3 position in positions)
@@ -111,7 +113,7 @@ namespace BuildingAligner
                     p.y = floorHeight;
 
                     float dist = Vector3.Distance(p, point);
-                    if (dist < 30f && /*Vector3.Dot(p - modulePos, point - modulePos) > 0f &&*/ Connection.canLink(mActiveModule, module, p, modulePos) && canPlaceModule(p, Vector3.up, Module.ValidSizes[mCurrentModuleSize]))
+                    if (dist < 35f && Connection.canLink(mActiveModule, module, p, modulePos) && canPlaceModule(p, Vector3.up, Module.ValidSizes[mCurrentModuleSize]))
                     {
                         if (dist < closestDist)
                         {
@@ -119,17 +121,17 @@ namespace BuildingAligner
                             closestPos = p;
                         }
 
-                        //if (!BuildingAligner.rendering)
-                        {
-                            if (count == 3)
-                            {
-                                DebugRenderer.addLine("Connections", modulePos + (p - modulePos).normalized * module.getRadius(), p, Color.blue, 0.5f);
-                                DebugRenderer.addCube("Connections", p, Color.blue, 1.0f);
-                            }
-                        }
+                        connectionAvailable = true;
                     }
 
-                    count = ++count % 4;
+                    if (count == 4 && connectionAvailable)
+                    {
+                        DebugRenderer.addLine("Connections", modulePos + (p - modulePos).normalized * module.getRadius(), p, Color.blue, 0.5f);
+                        DebugRenderer.addCube("Connections", p, Color.blue, 1.0f);
+                        connectionAvailable = false;
+                    }
+
+                    count = ++count % 5;
                 }
             }
 
@@ -286,7 +288,7 @@ namespace BuildingAligner
             Vector3 dir = module.getTransform().forward;
             for (int i = 0; i < 12; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < 5; j++)
                 {
                     positions.Add(pos + dir * (10f + 5f * j));
                 }
