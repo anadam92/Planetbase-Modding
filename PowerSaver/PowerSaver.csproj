@@ -47,16 +47,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Payload\Payload.csproj">
-      <Project>{298DE917-6E91-40E3-BDEE-21D08A00F2C5}</Project>
-      <Name>Payload</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Redirector\Redirector.csproj">
-      <Project>{3b78e003-e7b7-4177-b4f2-89e8fb5f6e88}</Project>
-      <Name>Redirector</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Settings\PowerSaver.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
