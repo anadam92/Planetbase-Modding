@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace BuildingAligner
 {
-    public class BuildingAligner : IMod
+    public class BuildingAligner : Payload.IMod
     {
         public static bool rendering = false;
 

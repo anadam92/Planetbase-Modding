@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace LandingControl
 {
-    public class LandingControl : IMod
+    public class LandingControl : Payload.IMod
     {
         public void Init()
         {

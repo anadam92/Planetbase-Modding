@@ -3,9 +3,10 @@ using Redirection;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace AutoConnections
 {
-    public class AutoConnections : IMod
+    public class AutoConnections : Payload.IMod
     {
         public void Init()
         {

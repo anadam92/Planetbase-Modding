@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace PowerSaver
 {
-    public class PowerSaver : IMod
+    public class PowerSaver : Payload.IMod
     {
         public static string PRIORITY_LIST_PATH = @"Mods\Settings\PowerSaver.xml";
         public static string CONSOLE_ICON_PATH = @"Mods\Textures\GridManagementConsoleIcon.png";

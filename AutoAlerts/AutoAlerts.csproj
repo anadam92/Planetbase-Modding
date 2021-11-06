@@ -46,6 +46,12 @@
     <Compile Include="AutoAlerts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Payload\Payload.csproj">
+      <Project>{298DE917-6E91-40E3-BDEE-21D08A00F2C5}</Project>
+      <Name>Payload</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(TargetPath)" "%25USERPROFILE%25\Documents\Planetbase\Mods"</PostBuildEvent>

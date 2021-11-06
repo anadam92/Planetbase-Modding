@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace FreeBuilding
 {
-    public class FreeBuilding : IMod
+    public class FreeBuilding : Payload.IMod
     {
         public void Init()
         {

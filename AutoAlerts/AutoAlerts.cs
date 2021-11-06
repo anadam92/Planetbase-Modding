@@ -5,9 +5,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+
 namespace AutoAlerts
 {
-    public class AutoAlerts : IMod
+
+    public class AutoAlerts : Payload.IMod
     {
         private bool m_autoActivated;
         private AlertState m_activatedState;

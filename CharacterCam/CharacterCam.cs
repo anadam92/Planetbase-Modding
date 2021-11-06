@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace CharacterCam
 {
-    public class CharacterCam : IMod
+    public class CharacterCam : Payload.IMod
     {
         public void Init()
         {

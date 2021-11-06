@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SkipIntro
 {
-    public class SkipIntro : IMod
+    public class SkipIntro : Payload.IMod
     {
         IntroCinemetic m_intro;
 

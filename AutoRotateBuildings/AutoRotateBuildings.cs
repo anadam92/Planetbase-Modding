@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AutoRotateBuildings
 {
-    public class AutoRotateBuildings : IMod
+    public class AutoRotateBuildings : Payload.IMod
     {
         private int connectionCount;
 

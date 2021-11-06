@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace CameraOverhaul
 {
-    public class CameraOverhaul : IMod
+    public class CameraOverhaul : Payload.IMod
     {
         public void Init()
         {

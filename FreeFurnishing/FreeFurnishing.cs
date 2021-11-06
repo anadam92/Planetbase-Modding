@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FreeFurnishing
 {
-    public class FreeFurnishing : IMod
+    public class FreeFurnishing : Payload.IMod
     {
         public void Init()
         {
