@@ -7,9 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 	ProjectSection(SolutionItems) = preProject
 		Reference Libraries\0Harmony.dll = Reference Libraries\0Harmony.dll
 		Reference Libraries\0Harmony.xml = Reference Libraries\0Harmony.xml
-		Assembly-CSharp.dll = Assembly-CSharp.dll
-		UnityEngine.dll = UnityEngine.dll
-		UnityEngine.UI.dll = UnityEngine.UI.dll
+		Reference Libraries\Assembly-CSharp-firstpass.dll = Reference Libraries\Assembly-CSharp-firstpass.dll
+		Reference Libraries\Assembly-CSharp.dll = Reference Libraries\Assembly-CSharp.dll
+		Reference Libraries\UnityEngine.dll = Reference Libraries\UnityEngine.dll
+		Reference Libraries\UnityEngine.UI.dll = Reference Libraries\UnityEngine.UI.dll
 		Reference Libraries\UnityModManager.dll = Reference Libraries\UnityModManager.dll
 		Reference Libraries\UnityModManager.xml = Reference Libraries\UnityModManager.xml
 	EndProjectSection
