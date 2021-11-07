@@ -49,7 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoConnections.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="GameStateGame_onModulePlacementEnd_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
