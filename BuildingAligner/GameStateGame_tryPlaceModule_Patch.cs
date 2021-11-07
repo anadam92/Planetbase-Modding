@@ -1,122 +1,111 @@
 ﻿using Planetbase;
-using Redirection;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using System.Reflection;
+using HarmonyLib;
 
-namespace BuildingAligner
-{
-    public class BuildingAligner : Payload.IMod
-    {
+namespace BuildingAligner {
+
+    [HarmonyPatch(typeof(GameStateGame), "tryPlaceModule", MethodType.Normal)]
+    public class GameStateGame_tryPlaceModule_Patch {
+
         public static bool rendering = false;
 
-        public void Init()
-        {
-            DebugRenderer.addGroup("Connections");
-            Redirector.PerformRedirections();
-            Debug.Log("[MOD] BuildingAligner activated");
-        }
+        private static Type type_DebugRenderer = Assembly.GetAssembly(typeof(GameManager)).GetType("DebugRenderer");
+        private static Traverse t_DebugRenderer = Traverse.Create(type_DebugRenderer);
 
-        public void Update()
-        {
-            GameStateGame gameState = GameManager.getInstance().getGameState() as GameStateGame;
-            if (gameState != null && gameState.mMode != GameStateGame.Mode.PlacingModule)
-            {
-                rendering = false;
-                DebugRenderer.clearGroup("Connections");
-            }
-        }
-    }
+        private static GameStateGame gameStateGame = GameManager.getInstance().getGameState() as GameStateGame;
+        private static Traverse t_gameStateGame = Traverse.Create(gameStateGame);
 
-    public abstract class CustomGameStateGame : GameStateGame
-    {
-        private CustomGameStateGame(string s, int i) : base(s, i) { }
+        private static object GameStateGame_Mode_PlacingModule = Traverse.Create<GameStateGame>().Type("Mode").Field("PlacingModule").GetValue();
+        private static float TerrainGenerator_TotalSize = Traverse.Create<TerrainGenerator>().Field<float>("TotalSize").Value;
 
-        [RedirectFrom(typeof(GameStateGame))]
-        public new void tryPlaceModule()
-        {
-            DebugRenderer.clearGroup("Connections");
+        [HarmonyPrefix]
+        public static bool tryPlaceModule_Prefix() {
+            Planetbase.Module mActiveModule = t_gameStateGame.Field("mActiveModule").GetValue<Planetbase.Module>();
+
+            t_DebugRenderer.Method("clearGroup").GetValue(new object[] { "Connections" });
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             int layerMask = 256;
             RaycastHit raycastHit;
-            if (Physics.Raycast(ray, out raycastHit, 150f, layerMask))
-            {
-                float size = Module.ValidSizes[mCurrentModuleSize];
-                if (mActiveModule == null)
-                {
-                    mActiveModule = Module.create(raycastHit.point, mCurrentModuleSize, mPlacedModuleType);
-                    mActiveModule.setRenderTop(mRenderTops);
-                    mActiveModule.setValidPosition(false);
-                    mCost = mActiveModule.calculateCost();
+            if (Physics.Raycast(ray, out raycastHit, 150f, layerMask)) {
+                int mCurrentModuleSize = t_gameStateGame.Field("mCurrentModuleSize").GetValue<int>();
+                float size = Planetbase.Module.ValidSizes[mCurrentModuleSize];
+                if (mActiveModule == null) {
+                    ModuleType mPlacedModuleType = t_gameStateGame.Field("mPlacedModuleType").GetValue<ModuleType>();
+                    Planetbase.Module newModule = Planetbase.Module.create(raycastHit.point, mCurrentModuleSize, mPlacedModuleType);
+                    newModule.setRenderTop(t_gameStateGame.Field("mRenderTops").GetValue<bool>());
+                    newModule.setValidPosition(false);
+                    t_gameStateGame.Field("mActiveModule").SetValue(newModule);
+                    t_gameStateGame.Field("mCost").SetValue(mActiveModule.calculateCost());
                 }
 
-                if (mCurrentModuleSize != mActiveModule.getSizeIndex())
-                {
+                if (mCurrentModuleSize != mActiveModule.getSizeIndex()) {
                     mActiveModule.changeSize(mCurrentModuleSize);
-                    mCost = mActiveModule.calculateCost();
+                    t_gameStateGame.Field("mCost").SetValue(mActiveModule.calculateCost());
                     mActiveModule.setValidPosition(false);
                 }
 
-                if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
-                {
+                if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
                     raycastHit.point = RenderAvailablePositions(raycastHit.point);
                     //TryAlign(ref raycastHit);
                 }
-                else
-                {
-                    BuildingAligner.rendering = false;
-                    DebugRenderer.clearGroup("Connections");
+                else {
+                    rendering = false;
+                    t_DebugRenderer.Method("clearGroup").GetValue(new object[] { "Connections" });
                 }
 
                 bool flag = mActiveModule.canPlaceModule(raycastHit.point, raycastHit.normal, size);
-                if (inTutorial())
-                {
-                    snapToTutorialPosition(ref raycastHit, ref flag);
+                if (t_gameStateGame.Method("inTutorial").GetValue<bool>()) {
+                    object[] parameters = new object[] { raycastHit, flag };
+                    typeof(GameStateGame).GetMethod("snapToTutorialPosition").Invoke(t_gameStateGame.GetValue(), parameters);
+                    raycastHit = (RaycastHit)parameters[0];
+                    flag = (bool)parameters[1];
                 }
 
                 Vector3 point = raycastHit.point;
                 float floorHeight = TerrainGenerator.getInstance().getFloorHeight();
                 point.y = floorHeight;
-                if (!mActiveModule.isValidPosition() || flag || (point - mActiveModule.getPosition()).magnitude > 5f)
-                {
+                if (!mActiveModule.isValidPosition() || flag || (point - mActiveModule.getPosition()).magnitude > 5f) {
                     mActiveModule.setValidPosition(flag);
                     mActiveModule.setPosition(point);
                 }
                 mActiveModule.setPositionY(floorHeight + 0.1f);
             }
+
+            return true;
         }
 
-        public Vector3 RenderAvailablePositions(Vector3 point)
-        {
+
+        static Vector3 RenderAvailablePositions(Vector3 point) {
             float closestDist = float.MaxValue;
             Vector3 closestPos = point;
             float floorHeight = TerrainGenerator.getInstance().getFloorHeight();
 
-            foreach (Module module in Module.mModules)
-            {
-                if (module == null || module == mActiveModule)
+            Planetbase.Module mActiveModule = t_gameStateGame.Field("mActiveModule").GetValue<Planetbase.Module>();
+            foreach (Planetbase.Module module in Traverse.Create(typeof(Planetbase.Module)).Field<List<Planetbase.Module>>("mModules").Value) {
+                if (module == null || module == mActiveModule) {
                     continue;
+                }
 
                 Vector3 modulePos = module.getPosition();
-
                 bool connectionAvailable = false;
-
                 int count = 0;
+
                 List<Vector3> positions = GetPositionsAroundModule(module);
-                foreach (Vector3 position in positions)
-                {
+                int mCurrentModuleSize = t_gameStateGame.Field("mCurrentModuleSize").GetValue<int>();
+
+                foreach (Vector3 position in positions) {
                     Vector3 p = position;
                     p.y = floorHeight;
-
                     float dist = Vector3.Distance(p, point);
-                    if (dist < 35f && Connection.canLink(mActiveModule, module, p, modulePos) && canPlaceModule(p, Vector3.up, Module.ValidSizes[mCurrentModuleSize]))
-                    {
-                        if (dist < closestDist)
-                        {
+                    if (dist < 35f && Connection.canLink(mActiveModule, module, p, modulePos) && canPlaceModule(p, Vector3.up, Planetbase.Module.ValidSizes[mCurrentModuleSize])) {
+                        if (dist < closestDist) {
                             closestDist = dist;
                             closestPos = p;
                         }
@@ -124,10 +113,9 @@ namespace BuildingAligner
                         connectionAvailable = true;
                     }
 
-                    if (count == 4 && connectionAvailable)
-                    {
-                        DebugRenderer.addLine("Connections", modulePos + (p - modulePos).normalized * module.getRadius(), p, Color.blue, 0.5f);
-                        DebugRenderer.addCube("Connections", p, Color.blue, 1.0f);
+                    if (count == 4 && connectionAvailable) {
+                        t_DebugRenderer.Method("addLine").GetValue(new object[] { "Connections", modulePos + (p - modulePos).normalized * module.getRadius(), p, Color.blue, 0.5f });
+                        t_DebugRenderer.Method("addCube").GetValue(new object[] { "Connections", p, Color.blue, 1.0f });
                         connectionAvailable = false;
                     }
 
@@ -136,26 +124,23 @@ namespace BuildingAligner
             }
 
             //hit.point = closestPos;
-            BuildingAligner.rendering = true;
+            rendering = true;
             return closestPos;
         }
-
-        public bool canPlaceModule(Vector3 position, Vector3 normal, float radius)
-        {
+        static bool canPlaceModule(Vector3 position, Vector3 normal, float radius) {
             float floorHeight = Singleton<TerrainGenerator>.getInstance().getFloorHeight();
             float heightDiff = position.y - floorHeight;
 
+            Planetbase.Module mActiveModule = t_gameStateGame.Field("mActiveModule").GetValue<Planetbase.Module>();
             bool isMine = mActiveModule.hasFlag(ModuleType.FlagMine);
-            if (isMine)
-            {
-                if (heightDiff < 1f || heightDiff > 3f)
-                {
+
+            if (isMine) {
+                if (heightDiff < 1f || heightDiff > 3f) {
                     // mine must be a little elevated
                     return false;
                 }
             }
-            else if (heightDiff > 0.1f || heightDiff < -0.1f)
-            {
+            else if (heightDiff > 0.1f || heightDiff < -0.1f) {
                 // not at floor level
                 return false;
             }
@@ -176,36 +161,29 @@ namespace BuildingAligner
                 position + new Vector3(-angledReducedRadius, 0f, -angledReducedRadius)
             };
 
-            if (isMine)
-            {
+            if (isMine) {
                 // above we verified that it is a bit elevated
                 // now make sure that at least one point is near level ground
                 bool isValid = false;
-                for (int i = 0; i < circumference.Length; i++)
-                {
+                for (int i = 0; i < circumference.Length; i++) {
                     Vector3 floor;
                     PhysicsUtil.findFloor(circumference[i], out floor, 256);
-                    if (floor.y < floorHeight + 1f || floor.y > floorHeight - 1f)
-                    {
+                    if (floor.y < floorHeight + 1f || floor.y > floorHeight - 1f) {
                         isValid = true;
                         break;
                     }
                 }
 
-                if (!isValid)
-                {
+                if (!isValid) {
                     return false;
                 }
             }
-            else
-            {
+            else {
                 // Make sure all points are near level ground
-                for (int j = 0; j < circumference.Length; j++)
-                {
+                for (int j = 0; j < circumference.Length; j++) {
                     Vector3 floor;
                     PhysicsUtil.findFloor(circumference[j], out floor, 256);
-                    if (floor.y > floorHeight + 2f || floor.y < floorHeight - 1f)
-                    {
+                    if (floor.y > floorHeight + 2f || floor.y < floorHeight - 1f) {
                         return false;
                     }
                 }
@@ -214,10 +192,9 @@ namespace BuildingAligner
             //position.y = floorHeight;
 
             // Can only be 375 units away from center of map
-            Vector2 mapCenter = new Vector2(TerrainGenerator.TotalSize, TerrainGenerator.TotalSize) * 0.5f;
+            Vector2 mapCenter = new Vector2(TerrainGenerator_TotalSize, TerrainGenerator_TotalSize) * 0.5f;
             float distToCenter = (mapCenter - new Vector2(position.x, position.z)).magnitude;
-            if (distToCenter > 375f)
-            {
+            if (distToCenter > 375f) {
                 return false;
             }
 
@@ -228,35 +205,29 @@ namespace BuildingAligner
             //}
 
             RaycastHit[] array2 = Physics.SphereCastAll(position + Vector3.up * 20f, radius * 0.5f + 3f, Vector3.down, 40f, 4198400);
-            if (array2 != null)
-            {
-                for (int k = 0; k < array2.Length; k++)
-                {
+            if (array2 != null) {
+                for (int k = 0; k < array2.Length; k++) {
                     RaycastHit raycastHit = array2[k];
                     GameObject gameObject = raycastHit.collider.gameObject.transform.root.gameObject;
-                    Construction construction = Construction.mConstructionDictionary[gameObject];
-                    if (construction != null)
-                    {
+                    Construction construction = Traverse.Create<Construction>().Field<Dictionary<GameObject, Construction>>("mConstructionDictionary").Value[gameObject];
+                    if (construction != null) {
                         //if (construction is Connection)
                         //{
                         //    return false;
                         //}
                         float distToConstruction = (position - construction.getPosition()).magnitude - mActiveModule.getRadius() - construction.getRadius();
-                        if (distToConstruction < 3f)
-                        {
+                        if (distToConstruction < 3f) {
                             return false;
                         }
                     }
-                    else
-                    {
+                    else {
                         Debug.LogWarning("Not hitting construction: " + gameObject.name);
                     }
                 }
             }
 
             // Check that it's away from the ship
-            if (Physics.CheckSphere(position, radius * 0.5f + 3f, 65536))
-            {
+            if (Physics.CheckSphere(position, radius * 0.5f + 3f, 65536)) {
                 return false;
             }
 
@@ -279,17 +250,13 @@ namespace BuildingAligner
 
             return true;
         }
-
-        public List<Vector3> GetPositionsAroundModule(Module module)
-        {
+        static List<Vector3> GetPositionsAroundModule(Planetbase.Module module) {
             List<Vector3> positions = new List<Vector3>();
 
             Vector3 pos = module.getPosition();
             Vector3 dir = module.getTransform().forward;
-            for (int i = 0; i < 12; i++)
-            {
-                for (int j = 0; j < 5; j++)
-                {
+            for (int i = 0; i < 12; i++) {
+                for (int j = 0; j < 5; j++) {
                     positions.Add(pos + dir * (10f + 5f * j));
                 }
 
@@ -299,17 +266,16 @@ namespace BuildingAligner
             return positions;
         }
 
-        public void TryAlign(ref RaycastHit raycastHit)
-        {
+
+        static void TryAlign(ref RaycastHit raycastHit) {
             // find available connections
-            List<Module> linkableModules = new List<Module>();
-            foreach (Module module in Module.mModules)
-            {
+            Planetbase.Module mActiveModule = t_gameStateGame.Field("mActiveModule").GetValue<Planetbase.Module>();
+            List<Planetbase.Module> linkableModules = new List<Planetbase.Module>();
+            foreach (Planetbase.Module module in Traverse.Create(typeof(Planetbase.Module)).Field<List<Planetbase.Module>>("mModules").Value) {
                 if (module == null || module == mActiveModule)
                     continue;
 
-                if (Connection.canLink(mActiveModule, module, raycastHit.point, module.getPosition()))
-                {
+                if (Connection.canLink(mActiveModule, module, raycastHit.point, module.getPosition())) {
                     linkableModules.Add(module);
                 }
             }
@@ -318,9 +284,10 @@ namespace BuildingAligner
 
             //float closestDist1 = float.MaxValue;
             //float closestDist2 = float.MaxValue;
-            //for (int i = 0; i < Module.mModules.Count; i++)
+            //<Planetbase.Module> mModules = Traverse.Create(typeof(Planetbase.Module)).Field<List<Planetbase.Module>>("mModules").Value
+            //for (int i = 0; i < mModules.Count; i++)
             //{
-            //    Module module = Module.mModules[i];
+            //    Module module = mModules[i];
             //    if (module != null && module != mActiveModule)
             //    {
             //        float dist = Vector3.Distance(module.getPosition(), raycastHit.point);
@@ -343,8 +310,7 @@ namespace BuildingAligner
             //}
 
             // try align with all
-            if (linkableModules.Count == 1)
-            {
+            if (linkableModules.Count == 1) {
                 Vector3 closestPoint, closestDir;
                 GetClosestPosAndDir(raycastHit.point, linkableModules[0], out closestPoint, out closestDir);
 
@@ -359,8 +325,7 @@ namespace BuildingAligner
 
                 raycastHit.point = closestPoint;
             }
-            else if (linkableModules.Count > 1)
-            {
+            else if (linkableModules.Count > 1) {
                 Vector3 point = raycastHit.point;
 
                 float closestDist = float.MaxValue;
@@ -377,18 +342,13 @@ namespace BuildingAligner
                 dir2.y = 0f;
 
                 point.y = 0f;
-                for (int i = 0; i < 12; i++)
-                {
-                    for (int j = 0; j < 12; j++)
-                    {
-                        if (Vector3.Dot(dir1, dir2) >= -0.9f && Vector3.Dot(dir1, dir2) <= 0.9f)
-                        {
+                for (int i = 0; i < 12; i++) {
+                    for (int j = 0; j < 12; j++) {
+                        if (Vector3.Dot(dir1, dir2) >= -0.9f && Vector3.Dot(dir1, dir2) <= 0.9f) {
                             Vector3 intersection;
-                            if (LineLineIntersection(out intersection, pos1, dir1, pos2, dir2))
-                            {
+                            if (LineLineIntersection(out intersection, pos1, dir1, pos2, dir2)) {
                                 float dist = Vector2.Distance(point, intersection);
-                                if (dist < closestDist)
-                                {
+                                if (dist < closestDist) {
                                     closestDist = dist;
                                     closestPos = intersection;
                                 }
@@ -414,9 +374,7 @@ namespace BuildingAligner
                 mActiveModule.setPosition(raycastHit.point);
             }
         }
-
-        public void GetClosestPosAndDir(Vector3 point, Module module, out Vector3 closestPoint, out Vector3 closestDir)
-        {
+        static void GetClosestPosAndDir(Vector3 point, Planetbase.Module module, out Vector3 closestPoint, out Vector3 closestDir) {
             Vector3 pos = module.getTransform().position;
             Vector3 dir = module.getTransform().forward;
 
@@ -424,14 +382,12 @@ namespace BuildingAligner
             closestDir = dir;
 
             float closestDist = float.MaxValue;
-            for (int i = 0; i < 12; i++)
-            {
+            for (int i = 0; i < 12; i++) {
                 float t = Vector3.Dot(point - pos, dir);
                 Vector3 closestPos = pos + dir * t;
 
                 float dist = Vector3.Distance(point, closestPos);
-                if (dist < closestDist)
-                {
+                if (dist < closestDist) {
                     closestDist = dist;
                     closestPoint = closestPos;
                     closestDir = dir;
@@ -440,9 +396,7 @@ namespace BuildingAligner
                 dir = Quaternion.Euler(0, 30f, 0) * dir;
             }
         }
-
-        public bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
-        {
+        static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2) {
 
             intersection = Vector3.zero;
 
@@ -453,8 +407,7 @@ namespace BuildingAligner
             float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
 
             //Lines are not coplanar. Take into account rounding errors.
-            if ((planarFactor >= 0.00001f) || (planarFactor <= -0.00001f))
-            {
+            if ((planarFactor >= 0.00001f) || (planarFactor <= -0.00001f)) {
                 return false;
             }
 
