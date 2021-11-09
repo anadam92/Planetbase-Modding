@@ -1,0 +1,8 @@
+﻿{
+	"Id": "AutoRotateBuildings",
+	"DisplayName": "AutoRotateBuildings",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "AutoRotateBuildings.dll",
+	"EntryMethod": "AutoRotateBuildings.Main.Load"
+}

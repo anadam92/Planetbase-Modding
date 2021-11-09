@@ -1,0 +1,8 @@
+﻿{
+	"Id": "LandingControl",
+	"DisplayName": "LandingControl",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "LandingControl.dll",
+	"EntryMethod": "LandingControl.Main.Load"
+}

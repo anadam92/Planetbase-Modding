@@ -1,0 +1,8 @@
+﻿{
+	"Id": "CharacterCam",
+	"DisplayName": "CharacterCam",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "CharacterCam.dll",
+	"EntryMethod": "CharacterCam.Main.Load"
+}

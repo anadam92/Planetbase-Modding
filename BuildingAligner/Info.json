@@ -1,0 +1,8 @@
+﻿{
+	"Id": "BuildingAligner",
+	"DisplayName": "BuildingAligner",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "BuildingAligner.dll",
+	"EntryMethod": "BuildingAligner.Main.Load"
+}

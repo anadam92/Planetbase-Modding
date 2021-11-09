@@ -1,0 +1,8 @@
+﻿{
+	"Id": "DebugManagerOn",
+	"DisplayName": "DebugManagerOn",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "DebugManagerOn.dll",
+	"EntryMethod": "DebugManagerOn.Main.Load"
+}

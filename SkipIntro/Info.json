@@ -1,0 +1,8 @@
+﻿{
+	"Id": "SkipIntro",
+	"DisplayName": "SkipIntro",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "SkipIntro.dll",
+	"EntryMethod": "SkipIntro.Main.Load"
+}

@@ -1,0 +1,8 @@
+﻿{
+	"Id": "FreeBuilding",
+	"DisplayName": "FreeBuilding",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "FreeBuilding.dll",
+	"EntryMethod": "FreeBuilding.Main.Load"
+}
