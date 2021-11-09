@@ -49,9 +49,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomColonistShip.cs" />
-    <Compile Include="CustomGuiLandingPermissions.cs" />
-    <Compile Include="LandingControl.cs" />
+    <Compile Include="ColonistShip_onLanded_Patch.cs" />
+    <Compile Include="GuiLandingPermissionsCustom.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="GuiInfoPanelRenderer_onPanelCallback_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
