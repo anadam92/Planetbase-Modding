@@ -49,7 +49,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FreeBuilding.cs" />
+    <Compile Include="Module_canPlaceModule_Patch.cs" />
+    <Content Include="canPlaceModule.original.cs.txt" />
+    <Content Include="canPlaceModule.edited.cs.txt" />
+    <Compile Include="GameManager_ctor_Patch.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,0 +1,132 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+using Planetbase;
+
+namespace FreeBuilding {
+
+    class ModuleOriginal : Module {
+
+        public bool canPlaceModule(Vector3 position, Vector3 normal, float size) {
+
+            float floorHeight = Singleton<TerrainGenerator>.getInstance().getFloorHeight();
+            float num = position.y - floorHeight;
+
+            
+            if (hasFlag(2)) {
+                if (num < 1f || num > 3f) {
+                    // mine must be a little elevated
+                    return false;
+                }
+            }
+            else if (num > 0.1f || num < -0.1f) {
+                // not at floor level
+                return false;
+            }
+
+            // here we're approximating the circumference of the structure with 8 points
+            // and will check that all these points are level with the floor
+            float num2 = size * 0.5f;
+            num2 *= 1.5f;
+            float num3 = num2 / 1.41421354f;
+            Vector3[] array = new Vector3[8]
+	        {
+		        position + new Vector3(num2, 0f, 0f),
+		        position + new Vector3(0f - num2, 0f, 0f),
+		        position + new Vector3(0f, 0f, num2),
+		        position + new Vector3(0f, 0f, 0f - num2),
+		        position + new Vector3(num3, 0f, num3),
+		        position + new Vector3(num3, 0f, 0f - num3),
+		        position + new Vector3(0f - num3, 0f, num3),
+		        position + new Vector3(0f - num3, 0f, 0f - num3)
+	        };
+
+            if (hasFlag(2)) {
+                // above we verified that it is a bit elevated
+                // now make sure that at least one point is near level ground
+                bool flag = false;
+                for (int i = 0; i < array.Length; i++) {
+                    Vector3 terrainPosition;
+                    PhysicsUtil.findFloor(array[i], out terrainPosition);
+                    if (terrainPosition.y < floorHeight + 1f || terrainPosition.y > floorHeight - 1f) {
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (!flag) {
+                    return false;
+                }
+            }
+            else {
+                // Make sure all points are near level ground
+                for (int j = 0; j < array.Length; j++) {
+                    Vector3 terrainPosition2;
+                    PhysicsUtil.findFloor(array[j], out terrainPosition2);
+                    if (terrainPosition2.y > floorHeight + 2f || terrainPosition2.y < floorHeight - 1f) {
+                        return false;
+                    }
+                }
+            }
+
+            position.y = floorHeight; // transpiler: 1: to remove
+
+            // Can only be 375 units away from center of map
+            Vector2 a = new Vector3(2000f, 2000f) * 0.5f;
+            float magnitude = (a - new Vector2(position.x, position.z)).magnitude;
+            if (magnitude > 375f) {
+                return false;
+            }
+
+            // anyPotentialLinks limits connection to 20 (on top of some other less relevant checks)
+            if (Construction.mConstructions.Count > 1 && !anyPotentialLinks(position)) {
+                return false;
+            }
+
+            RaycastHit[] array2 = Physics.SphereCastAll(position + Vector3.up * 20f, size * 0.5f + 9f, Vector3.down, 40f, 4198400); // transpiler: 2: 9f -> 3f
+            if (array2 != null) {
+
+                foreach (RaycastHit raycastHit in array2) {
+                    GameObject gameObject = raycastHit.collider.gameObject.transform.root.gameObject;
+                    Construction construction = Construction.mConstructionDictionary[gameObject];
+                    if (construction != null) {
+                        if (construction is Connection) {   //
+                            return false;                   // } transpiler: 3: remove
+                        }                                   //
+                        float num4 = (position - construction.getPosition()).magnitude - getRadius() - construction.getRadius();
+                        if (num4 < 9f) { // transpiler: 4: 9f -> 3f
+                            return false;
+                        }
+                    }
+                    else {
+                        Debug.LogWarning("Not hitting construction: " + gameObject.name);
+                    }
+                }
+            }
+
+            // Check that it's away from the ship
+            if (Physics.CheckSphere(position, size * 0.5f + 10f, 65536)) { // transpiler: 5: 10f -> 3f
+                return false;
+            }
+
+            // Check that it doesn't overlap materials
+            if (Physics.CheckSphere(position, size * 0.5f + 2f, 1024)) {                            //
+                return false;                                                                       // } transpiler: 6: remove
+            }                                                                                       //
+
+            // This is to rotate the mine. We're setting the mine as auto-rotate instead
+            if (hasFlag(2)) {                                                                       //
+                Vector3 normalized = new Vector3(normal.x, 0f, normal.z).normalized;                //
+                if (Vector3.Dot(mObject.transform.forward, normalized) < 0.8660254f) {              // 
+                                                                                                    // } transpiler: 6: remove
+                    mObject.transform.forward = normalized;                                         //
+                }                                                                                   //
+            }                                                                                       //
+
+            return true;
+        }
+
+    }
+}
