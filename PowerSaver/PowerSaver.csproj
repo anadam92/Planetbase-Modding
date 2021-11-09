@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.XML" />
     <Reference Include="UnityEngine">
       <HintPath>..\Reference Libraries\UnityEngine.dll</HintPath>
     </Reference>
@@ -49,8 +50,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameManager_ctor_Patch.cs" />
+    <Compile Include="GameStateGame_update_Patch.cs" />
+    <Compile Include="GridCustom.cs" />
+    <Compile Include="GridManagementConsole.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="PowerSaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SavingMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Settings\PowerSaver.xml">
