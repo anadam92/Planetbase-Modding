@@ -4,7 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 using System;
 
-namespace AutoAlerts {
+namespace AutoRotateBuildings {
 
     [HarmonyPatch(typeof(GameStateGame), "update", MethodType.Normal)]
     class GameStateGame_update_Patch {

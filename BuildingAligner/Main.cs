@@ -9,7 +9,7 @@ using UnityModManagerNet;
 using HarmonyLib;
 
 
-namespace AutoAlerts {
+namespace BuildingAligner {
 
     public static class Main {
 

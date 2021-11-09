@@ -9,7 +9,7 @@ using UnityModManagerNet;
 using HarmonyLib;
 
 
-namespace AutoAlerts {
+namespace CameraOverhaul {
 
     public static class Main {
 
