@@ -9,7 +9,7 @@ using UnityModManagerNet;
 using HarmonyLib;
 
 
-namespace AutoAlerts {
+namespace SkipIntro {
 
     public static class Main {
 
