@@ -1,0 +1,8 @@
+﻿{
+	"Id": "Simplify",
+	"DisplayName": "Simplify",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "Simplify.dll",
+	"EntryMethod": "Simplify.Main.Load"
+}

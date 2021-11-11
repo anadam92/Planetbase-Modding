@@ -49,6 +49,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastAirlock", "FastAirlock\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreSpeed", "MoreSpeed\MoreSpeed.csproj", "{822E33D0-B92B-4824-976A-351C78D0A7A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simplify", "Simplify\Simplify.csproj", "{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageGuru", "StorageGuru\StorageGuru.csproj", "{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +205,22 @@ Global
 		{822E33D0-B92B-4824-976A-351C78D0A7A3}.onlyPathcer|Any CPU.Build.0 = onlyPathcer|Any CPU
 		{822E33D0-B92B-4824-976A-351C78D0A7A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{822E33D0-B92B-4824-976A-351C78D0A7A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.onlyPatcher|Any CPU.ActiveCfg = onlyPatcher|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.onlyPatcher|Any CPU.Build.0 = onlyPatcher|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.onlyPathcer|Any CPU.ActiveCfg = onlyPathcer|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.onlyPathcer|Any CPU.Build.0 = onlyPathcer|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D3D4FF5-3321-431F-8FEE-F8CE198CEEA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.onlyPatcher|Any CPU.ActiveCfg = onlyPatcher|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.onlyPatcher|Any CPU.Build.0 = onlyPatcher|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.onlyPathcer|Any CPU.ActiveCfg = onlyPathcer|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.onlyPathcer|Any CPU.Build.0 = onlyPathcer|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7438BF0-BB4B-43F6-BD36-8A38F17B2B49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

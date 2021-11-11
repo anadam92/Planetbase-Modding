@@ -1,0 +1,8 @@
+﻿{
+	"Id": "StorageGuru",
+	"DisplayName": "StorageGuru",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "StorageGuru.dll",
+	"EntryMethod": "StorageGuru.Main.Load"
+}
