@@ -1,0 +1,8 @@
+﻿{
+	"Id": "NoSpares",
+	"DisplayName": "NoSpares",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "NoSpares.dll",
+	"EntryMethod": "NoSpares.Main.Load"
+}

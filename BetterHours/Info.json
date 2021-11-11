@@ -1,0 +1,8 @@
+﻿{
+	"Id": "BetterHours",
+	"DisplayName": "BetterHours",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "BetterHours.dll",
+	"EntryMethod": "BetterHours.Main.Load"
+}

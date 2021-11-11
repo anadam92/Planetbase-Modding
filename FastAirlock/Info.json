@@ -1,0 +1,8 @@
+﻿{
+	"Id": "FastAirlock",
+	"DisplayName": "FastAirlock",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "FastAirlock.dll",
+	"EntryMethod": "FastAirlock.Main.Load"
+}
