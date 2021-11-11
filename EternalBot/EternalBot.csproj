@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameManager_ctor_Patch.cs" />
-    <Compile Include="NewBot.cs" />
+    <Compile Include="EternalBot_update_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="EternalBot.cs" />

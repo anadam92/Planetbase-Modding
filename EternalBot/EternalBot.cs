@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace EternalBot {
 
-    public partial class SheenMod  {
+    public class EternalBot  {
 
         private static AlertState m_activatedState = AlertState.NoAlert;
         private static bool m_autoActivated = false;

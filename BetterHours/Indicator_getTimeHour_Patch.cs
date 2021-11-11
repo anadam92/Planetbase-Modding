@@ -10,7 +10,7 @@ namespace BetterHours {
     class Indicator_getTimeHour_Patch {
 
         [HarmonyPostfix]
-        public static bool Prefix(ref float __result, float value) {
+        public static bool Prefix(ref int __result, float value) {
             double dayHours = BetterHours.getDayHours();
             __result = (int)(((double)value * dayHours + 6.0) % dayHours);
             return false;

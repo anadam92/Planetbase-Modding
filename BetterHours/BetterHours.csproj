@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <LangVersion>4</LangVersion>
     <AssemblyName>BetterHours</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <TargetFrameworkProfile />
