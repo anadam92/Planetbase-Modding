@@ -10,7 +10,7 @@ namespace Simplifiy {
         public abstract class ColonistShip_onLanded_Patch  {
 
             [HarmonyPrefix]
-            public new void Prefix(ColonistShip __instance) {
+            public static void Prefix(ColonistShip __instance) {
                 Traverse t___instance = Traverse.Create(__instance);
 
                 float value = Singleton<Colony>.getInstance().getWelfareIndicator().getValue();

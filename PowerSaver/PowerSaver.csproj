@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="GameManager_ctor_Patch.cs" />
     <Compile Include="GameStateGame_update_Patch.cs" />
-    <Compile Include="GridCustom.cs" />
+    <Compile Include="Grid_calculateBalance_Patch.cs" />
     <Compile Include="GridManagementConsole.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="PowerSaver.cs" />

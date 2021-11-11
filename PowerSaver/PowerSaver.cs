@@ -8,7 +8,9 @@ using UnityEngine;
 using HarmonyLib;
 
 namespace PowerSaver {
+
     public class PowerSaver {
+
         public static string PRIORITY_LIST_PATH = @"Mods\Settings\PowerSaver.xml";
         public static string CONSOLE_ICON_PATH = @"Mods\Textures\GridManagementConsoleIcon.png";
 
@@ -127,6 +129,7 @@ namespace PowerSaver {
 
             return total;
         }
+
     }
 
 }

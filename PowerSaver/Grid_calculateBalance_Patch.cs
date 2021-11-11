@@ -7,11 +7,11 @@ using HarmonyLib;
 
 namespace PowerSaver {
 
-    [HarmonyPatch(typeof(Grid), "calculateBalance", MethodType.Normal)]
+    [HarmonyPatch(typeof(Grid), "calculateBalance", new Type[] { typeof(GridResource) })]
     public class Grid_calculateBalance_Patch {
 
         [HarmonyPrefix]
-        public bool Prefix(Grid __instance, GridResource gridResource) {
+        public static bool Prefix(Grid __instance, GridResource gridResource) {
             bool consoleExists = false;
             foreach (ConstructionComponent component in PowerSaver.ConstructionComponent_mComponents) {
                 Indicator component_mConditionIndicator = Traverse.Create(component).Field<Indicator>("mConditionIndicator").Value;
@@ -33,7 +33,7 @@ namespace PowerSaver {
             return false;
         }
 
-        private void advancedCalculateBalance(Traverse t___instance, GridResource gridResource) {
+        private static void advancedCalculateBalance(Traverse t___instance, GridResource gridResource) {
             HashSet<Construction> __instance_mConstructions = t___instance.Field<HashSet<Construction>>("mConstructions").Value;
             Traverse t___instance_getGeneration = t___instance.Method("getGeneration");
             Traverse t___instance_setResourceAvailable = t___instance.Method("setResourceAvailable");
@@ -53,7 +53,7 @@ namespace PowerSaver {
                         amountCreated += amountGenerated;
                     else
                         amountConsumed -= amountGenerated;
-                    
+
                     t___instance_setResourceAvailable.GetValue(new object[] { construction, gridResource, true });
 
                     if (construction is Connection)
@@ -130,7 +130,7 @@ namespace PowerSaver {
             }
         }
 
-        private void basicCalculateBalance(Traverse t___instance, GridResource gridResource) {
+        private static void basicCalculateBalance(Traverse t___instance, GridResource gridResource) {
             HashSet<Construction> __instance_mConstructions = t___instance.Field<HashSet<Construction>>("mConstructions").Value;
             Traverse t___instance_getGeneration = t___instance.Method("getGeneration");
             Traverse t___instance_setResourceAvailable = t___instance.Method("setResourceAvailable");
@@ -151,7 +151,7 @@ namespace PowerSaver {
                         amountCreated += amountGenerated;
                     else
                         amountConsumed -= amountGenerated;
-                    
+
                     if (!t___instance_isResourceAvailable.GetValue<bool>(new object[] { construction, gridResource }))
                         constructionsLackingResource.Add(construction);
 
