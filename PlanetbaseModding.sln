@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRotateBuildings", "AutoRotateBuildings\AutoRotateBuildings.csproj", "{6557747C-A659-4FCE-AA47-100E35762ABF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{F64B0C62-5768-4685-90FD-5AB8FB52F2EE}"
 	ProjectSection(SolutionItems) = preProject
 		Reference Libraries\0Harmony.dll = Reference Libraries\0Harmony.dll
@@ -14,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 		Reference Libraries\UnityModManager.dll = Reference Libraries\UnityModManager.dll
 		Reference Libraries\UnityModManager.xml = Reference Libraries\UnityModManager.xml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRotateBuildings", "AutoRotateBuildings\AutoRotateBuildings.csproj", "{6557747C-A659-4FCE-AA47-100E35762ABF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterCam", "CharacterCam\CharacterCam.csproj", "{6F94447C-5A34-4759-A43C-215A6DE9E61B}"
 EndProject
