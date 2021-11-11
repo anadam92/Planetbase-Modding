@@ -1,0 +1,1 @@
+the value in fastairlock is the speed at witch the ailock animation is played

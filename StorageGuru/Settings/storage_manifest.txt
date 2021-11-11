@@ -1,0 +1,11 @@
+3870:{Metal}
+4200:{Bioplastic}
+4894:{Vegetables}
+8513:{}
+11295:{}
+11898:{Spares,MedicalSupplies}
+14059:{MedicalSupplies,Spares}
+15913:{Vegetables}
+15924:{MedicinalPlants}
+28381:{}
+28400:{}
