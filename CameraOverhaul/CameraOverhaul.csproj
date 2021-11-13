@@ -55,8 +55,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CameraManagerCustom.cs" />
-    <Compile Include="CameraManager_getInstance_Patch.cs" />
+    <Compile Include="CameraManagerProxy.cs" />
+    <Compile Include="CameraOverhaul.cs" />
+    <Compile Include="CameraManager_fixedUpdate_Patch.cs" />
+    <Compile Include="CameraManager_update_Patch.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
