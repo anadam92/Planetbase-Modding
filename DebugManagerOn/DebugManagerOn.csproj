@@ -48,8 +48,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugManagerOn_MonoBehaviour.cs" />
+    <Compile Include="DebugManager_toggle_Patch.cs" />
     <Compile Include="GameManager_ctor_Patch.cs" />
+    <Compile Include="GameManager_onGui_Patch.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

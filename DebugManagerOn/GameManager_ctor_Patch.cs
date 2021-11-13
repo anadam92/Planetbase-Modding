@@ -15,9 +15,24 @@ namespace DebugManagerOn {
 
         [HarmonyPostfix]
         public static void Postfix() {
-            GameObject go = new GameObject();
-            go.AddComponent<DebugManagerOn_MonoBehaviour>();
-            GameObject.DontDestroyOnLoad(go);
+            Planetbase.ShortcutManager.getInstance().addShortcut(KeyCode.F11, (object parameter) => Planetbase.DebugManager.getInstance().toggle());
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderInteriorNavGraph").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderExteriorNavGraph").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderNavPath").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderAStar").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mDebugAiMessages").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mDebugAiSelectionOnly").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mDebugCamera").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mHideAllTops").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mExtraDescriptionInfo").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mInexpensiveBuildings").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mHideConnections").Value = false;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mDebugGround").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mShowAchievements").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("m100PercentInterceptionChance").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderGraphColors").Value = true;
+            Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderAirlockDistances").Value = true;
+
         }
 
     }
