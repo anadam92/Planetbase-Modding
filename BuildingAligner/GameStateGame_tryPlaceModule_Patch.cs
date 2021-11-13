@@ -15,20 +15,21 @@ namespace BuildingAligner {
 
         public static bool rendering = false;
 
-        private static Type type_DebugRenderer = Assembly.GetAssembly(typeof(GameManager)).GetType("DebugRenderer");
+        private static Type type_DebugRenderer = Assembly.GetAssembly(typeof(GameManager)).GetType("Planetbase.DebugRenderer");
         private static Traverse t_DebugRenderer = Traverse.Create(type_DebugRenderer);
-
-        private static GameStateGame gameStateGame = GameManager.getInstance().getGameState() as GameStateGame;
-        private static Traverse t_gameStateGame = Traverse.Create(gameStateGame);
 
         private static object GameStateGame_Mode_PlacingModule = Traverse.Create<GameStateGame>().Type("Mode").Field("PlacingModule").GetValue();
         private static float TerrainGenerator_TotalSize = Traverse.Create<TerrainGenerator>().Field<float>("TotalSize").Value;
 
         [HarmonyPrefix]
         public static bool tryPlaceModule_Prefix() {
+
+            GameStateGame gameStateGame = GameManager.getInstance().getGameState() as GameStateGame;
+            Traverse t_gameStateGame = Traverse.Create(gameStateGame);
+
             Planetbase.Module mActiveModule = t_gameStateGame.Field("mActiveModule").GetValue<Planetbase.Module>();
 
-            t_DebugRenderer.Method("clearGroup").GetValue(new object[] { "Connections" });
+            MethodInvoker.GetHandler(AccessTools.DeclaredMethod(type_DebugRenderer, "clearGroup")).Invoke(null ,new object[] { "Connections" });
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             int layerMask = 256;
@@ -52,12 +53,12 @@ namespace BuildingAligner {
                 }
 
                 if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
-                    raycastHit.point = RenderAvailablePositions(raycastHit.point);
+                    raycastHit.point = RenderAvailablePositions(t_gameStateGame, raycastHit.point);
                     //TryAlign(ref raycastHit);
                 }
                 else {
                     rendering = false;
-                    t_DebugRenderer.Method("clearGroup").GetValue(new object[] { "Connections" });
+                    MethodInvoker.GetHandler(AccessTools.DeclaredMethod(type_DebugRenderer, "clearGroup")).Invoke(null, new object[] { "Connections" });
                 }
 
                 bool flag = mActiveModule.canPlaceModule(raycastHit.point, raycastHit.normal, size);
@@ -82,7 +83,7 @@ namespace BuildingAligner {
         }
 
 
-        static Vector3 RenderAvailablePositions(Vector3 point) {
+        static Vector3 RenderAvailablePositions(Traverse t_gameStateGame , Vector3 point) {
             float closestDist = float.MaxValue;
             Vector3 closestPos = point;
             float floorHeight = TerrainGenerator.getInstance().getFloorHeight();
@@ -104,7 +105,7 @@ namespace BuildingAligner {
                     Vector3 p = position;
                     p.y = floorHeight;
                     float dist = Vector3.Distance(p, point);
-                    if (dist < 35f && Connection.canLink(mActiveModule, module, p, modulePos) && canPlaceModule(p, Vector3.up, Planetbase.Module.ValidSizes[mCurrentModuleSize])) {
+                    if (dist < 35f && Connection.canLink(mActiveModule, module, p, modulePos) && canPlaceModule(t_gameStateGame, p, Vector3.up, Planetbase.Module.ValidSizes[mCurrentModuleSize])) {
                         if (dist < closestDist) {
                             closestDist = dist;
                             closestPos = p;
@@ -114,8 +115,8 @@ namespace BuildingAligner {
                     }
 
                     if (count == 4 && connectionAvailable) {
-                        t_DebugRenderer.Method("addLine").GetValue(new object[] { "Connections", modulePos + (p - modulePos).normalized * module.getRadius(), p, Color.blue, 0.5f });
-                        t_DebugRenderer.Method("addCube").GetValue(new object[] { "Connections", p, Color.blue, 1.0f });
+                        MethodInvoker.GetHandler(AccessTools.DeclaredMethod(type_DebugRenderer, "addLine")).Invoke(null, new object[] { "Connections", modulePos + (p - modulePos).normalized * module.getRadius(), p, Color.blue, 0.5f });
+                        MethodInvoker.GetHandler(AccessTools.DeclaredMethod(type_DebugRenderer, "addCube")).Invoke(null, new object[] { "Connections", p, Color.blue, 1.0f });
                         connectionAvailable = false;
                     }
 
@@ -127,7 +128,7 @@ namespace BuildingAligner {
             rendering = true;
             return closestPos;
         }
-        static bool canPlaceModule(Vector3 position, Vector3 normal, float radius) {
+        static bool canPlaceModule(Traverse t_gameStateGame, Vector3 position, Vector3 normal, float radius) {
             float floorHeight = Singleton<TerrainGenerator>.getInstance().getFloorHeight();
             float heightDiff = position.y - floorHeight;
 
@@ -267,7 +268,7 @@ namespace BuildingAligner {
         }
 
 
-        static void TryAlign(ref RaycastHit raycastHit) {
+        static void TryAlign(Traverse t_gameStateGame, ref RaycastHit raycastHit) {
             // find available connections
             Planetbase.Module mActiveModule = t_gameStateGame.Field("mActiveModule").GetValue<Planetbase.Module>();
             List<Planetbase.Module> linkableModules = new List<Planetbase.Module>();
