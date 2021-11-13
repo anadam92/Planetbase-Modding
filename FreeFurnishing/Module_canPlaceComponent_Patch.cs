@@ -8,9 +8,9 @@ using HarmonyLib;
 using System.Reflection;
 
 namespace FreeFurnishing {
-
+    
     [HarmonyPatch(typeof(Planetbase.Module), "canPlaceComponent", MethodType.Normal)]
-    static class GameGuiManager_setTimeScale_Patch {
+    static class Module_canPlaceComponent_Patch {
 
         private static MethodInfo mi_clampComponentPosition = typeof(Planetbase.Module).GetMethod("clampComponentPosition");
         private static MethodInfo mi_intersectsAnyComponents = typeof(Planetbase.Module).GetMethod("intersectsAnyComponents");

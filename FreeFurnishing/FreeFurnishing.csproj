@@ -49,7 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CloseCameraCinematic_updateCharacter_Patch.cs" />
+    <Compile Include="Module_canPlaceComponent_Patch.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

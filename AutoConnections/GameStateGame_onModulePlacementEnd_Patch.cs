@@ -7,19 +7,27 @@ namespace AutoConnections {
     [HarmonyPatch(typeof(GameStateGame), "onModulePlacementEnd", MethodType.Normal)]
     public abstract class GameStateGame_onModulePlacementEnd_Patch {
 
-        private static Traverse<Module> t_mActiveModule = Traverse.Create<Module>().Field<Module>("mActiveModule");
-        private static Traverse<List<Module>> t_mModules = Traverse.Create<Module>().Field<List<Module>>("mModules");
-        private static FastInvokeHandler mi_Module_recycleLinkComponents = MethodInvoker.GetHandler(typeof(Module).GetMethod("recycleLinkComponents"));
-        
+        private static readonly Traverse<Module> t_mActiveModule;
+        private static readonly Traverse<List<Module>> t_mModules;
+        private static readonly FastInvokeHandler mi_Module_recycleLinkComponents;
+
+        static GameStateGame_onModulePlacementEnd_Patch() {
+            t_mActiveModule = Traverse.Create<Module>().Field<Module>("mActiveModule");
+            t_mModules = Traverse.Create<Module>().Field<List<Module>>("mModules");
+            mi_Module_recycleLinkComponents = MethodInvoker.GetHandler(AccessTools.Method(typeof(Module), "recycleLinkComponents"));
+        }
+
         [HarmonyLib.HarmonyPrefix]
         public static void Prefix() {
             Module mActiveModule = t_mActiveModule.Value;
             List<Module> mModules = t_mModules.Value;
+            if (mActiveModule == null || mModules == null) {
+                return;
+            }
 
             // Add available connections
             List<Module> linkableModules = new List<Module>();
-            for (int i = 0; i < mModules.Count; i++) {
-                Module module = mModules[i];
+            foreach (Module module in mModules) {
                 if (module != null && module != mActiveModule && Connection.canLink(mActiveModule, module, mActiveModule.getPosition(), module.getPosition())) {
                     linkableModules.Add(module);
                 }
