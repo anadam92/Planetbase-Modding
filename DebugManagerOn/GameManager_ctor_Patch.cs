@@ -15,7 +15,7 @@ namespace DebugManagerOn {
 
         [HarmonyPostfix]
         public static void Postfix() {
-            Planetbase.ShortcutManager.getInstance().addShortcut(KeyCode.F11, (object parameter) => Planetbase.DebugManager.getInstance().toggle());
+            Planetbase.ShortcutManager.getInstance().addShortcut(KeyCode.F11, (object parameter) => Planetbase.DebugManager.getInstance().toggle(), true);
             Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderInteriorNavGraph").Value = true;
             Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderExteriorNavGraph").Value = true;
             Traverse.Create(Planetbase.DebugManager.getInstance()).Field<bool>("mRenderNavPath").Value = true;
