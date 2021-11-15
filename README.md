@@ -9,8 +9,8 @@ To use these mods:
 1. [Install UMM](https://www.nexusmods.com/site/mods/21)
 2. Download a release from this repository. [1.0.0](https://github.com/anadam92/Planetbase-Modding/releases/download/1.0.0/PlanetBase_mods_umm.7z)
 3. Go to the installation folder of UMM and find the UnityModManagerConfig.xml file
-4. Add these lines in the end of the file before the `</Config>` line.
-`
+4. Add these lines in the end of the file before the ```</Config>``` line.
+```
 <!-- 0.24.0 -->
 	<GameInfo Name="Planetbase">
 		<Folder>Planetbase</Folder>
@@ -21,7 +21,7 @@ To use these mods:
 		<StartingPoint>[Assembly-CSharp.dll]Planetbase.GameStateTitle.init:After</StartingPoint>
 		<MinimalManagerVersion>0.24.0</MinimalManagerVersion>
 	</GameInfo>
-`
+````
   5. Run UMM.
   6. Now you can select Planetbase as the game.
   7. Drag & Drop the mods (zip files) you want in the "Mods" tab of UMM.
