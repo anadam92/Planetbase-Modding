@@ -27,14 +27,16 @@ namespace MoreSpeed {
             return true; // If false the mod will show an error.
         }
 
+
+
         static bool doPatching(bool patch = true) {
             bool result = true;
 //            try {
                 if (patch) {
-                    harmony.PatchAll(Assembly.GetExecutingAssembly());
+                    MoreSpeed.doPatching();
                 }
                 else {
-                    harmony.UnpatchAll();
+                    MoreSpeed.doUnPatching();
                 }
 //            }
 //            catch (Exception) {

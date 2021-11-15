@@ -10,17 +10,24 @@ using HarmonyLib;
 
 namespace MoreSpeed {
 
-    [HarmonyPatch(typeof(GameManager), MethodType.Constructor)]
-    public class GameManager_ctor_Patch {
+    public class MoreSpeed {
 
-        [HarmonyPostfix]
-        public static void Postfix() {
-            Traverse<float[]> t_TimeScales = Traverse.Create(Singleton<TimeManager>.getInstance()).Field<float[]>("TimeScales");
-            List<float> list = t_TimeScales.Value.ToList<float>();
-            list.Add(6f);
-            list.Add(8f);
-            list.Add(10f);
-            t_TimeScales.Value = list.ToArray();
+        private static float[] TimeScales_beforePatching;
+
+        public static void doPatching() {
+            Traverse<float[]>  t_TimeManager_TimeScales = Traverse.Create(Singleton<TimeManager>.getInstance()).Field<float[]>("TimeScales");
+            TimeScales_beforePatching = t_TimeManager_TimeScales.Value;
+            HashSet<float> set = new HashSet<float>(TimeScales_beforePatching);
+            set.Add(6f);
+            set.Add(8f);
+            set.Add(10f);
+            t_TimeManager_TimeScales.Value = set.ToArray();
+        }
+
+        public static void doUnPatching() {
+            Singleton<TimeManager>.getInstance().setNormalSpeed();
+            Traverse.Create(Singleton<TimeManager>.getInstance()).Field<float[]>("TimeScales").Value = TimeScales_beforePatching;
+            TimeScales_beforePatching = null;
         }
 
     }
