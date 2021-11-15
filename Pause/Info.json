@@ -1,0 +1,9 @@
+﻿{
+	"Id": "anadam92.Pause",
+	"DisplayName": "Pause",
+	"Version": "1.0.1",
+	"Author": "anadam92",
+	"ManagerVersion": "0.24.0",
+	"AssemblyName": "Pause.dll",
+	"EntryMethod": "Pause.Main.Load"
+}

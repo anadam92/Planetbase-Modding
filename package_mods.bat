@@ -17,6 +17,7 @@ ROBOCOPY %___dev_dir___%\LandingControl\bin\Debug %___output_dir___%\LandingCont
 ROBOCOPY %___dev_dir___%\MoreSpeed\bin\Debug %___output_dir___%\MoreSpeed MoreSpeed.dll Info.json /E
 ROBOCOPY %___dev_dir___%\NoIntruders\bin\Debug %___output_dir___%\NoIntruders NoIntruders.dll Info.json /E
 ROBOCOPY %___dev_dir___%\NoSpares\bin\Debug %___output_dir___%\NoSpares NoSpares.dll Info.json /E
+ROBOCOPY %___dev_dir___%\Pause\bin\Debug %___output_dir___%\Pause Pause.dll Info.json /E
 ROBOCOPY %___dev_dir___%\PowerSaver\bin\Debug %___output_dir___%\PowerSaver PowerSaver.dll Info.json GridManagementConsoleIcon.png PowerSaver.xml /E
 ROBOCOPY %___dev_dir___%\Simplify\bin\Debug %___output_dir___%\Simplify Simplify.dll Info.json Simplify.csv /E
 ROBOCOPY %___dev_dir___%\SkipIntro\bin\Debug %___output_dir___%\SkipIntro SkipIntro.dll Info.json /E
@@ -38,6 +39,7 @@ ROBOCOPY %___dev_dir___%\StorageGuru\bin\Debug %___output_dir___%\StorageGuru St
 "C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\MoreSpeed.zip %___output_dir___%\MoreSpeed
 "C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\NoIntruders.zip %___output_dir___%\NoIntruders
 "C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\NoSpares.zip %___output_dir___%\NoSpares
+"C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\Pause.zip %___output_dir___%\Pause
 "C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\PowerSaver.zip %___output_dir___%\PowerSaver
 "C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\Simplify.zip %___output_dir___%\Simplify
 "C:\Program Files\7-Zip\7z.exe" a -tzip %___output_dir___%\SkipIntro.zip %___output_dir___%\SkipIntro
@@ -59,6 +61,7 @@ RMDIR %___output_dir___%\LandingControl /S /Q
 RMDIR %___output_dir___%\MoreSpeed /S /Q
 RMDIR %___output_dir___%\NoIntruders /S /Q
 RMDIR %___output_dir___%\NoSpares /S /Q
+RMDIR %___output_dir___%\Pause /S /Q
 RMDIR %___output_dir___%\PowerSaver /S /Q
 RMDIR %___output_dir___%\Simplify /S /Q
 RMDIR %___output_dir___%\SkipIntro /S /Q
