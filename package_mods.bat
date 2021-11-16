@@ -1,3 +1,7 @@
+REM Notepad++ Regex Replace:	ROBOCOPY %___dev_dir___%\\\1\\bin\\Debug %___output_dir___%\\\1 \1\.dll Info\.json /E
+REM Notepad++ Regex Replace:	"C:\\Program Files\\7-Zip\\7z\.exe" a -tzip %___output_dir___%\\\1\.zip %___output_dir___%\\\1
+REM Notepad++ Regex Replace:	RMDIR %___output_dir___%\\\1 /S /Q
+
 SET ___dev_dir___=%~dp0
 SET ___output_dir___=%userprofile%\Downloads\PlanetBase_mods_umm
 
