@@ -21,7 +21,7 @@ namespace MoreSpeed {
             set.Add(6f);
             set.Add(8f);
             set.Add(10f);
-            t_TimeManager_TimeScales.Value = set.ToArray();
+            t_TimeManager_TimeScales.Value = set.OrderBy((o) => o).ToArray();
         }
 
         public static void doUnPatching() {

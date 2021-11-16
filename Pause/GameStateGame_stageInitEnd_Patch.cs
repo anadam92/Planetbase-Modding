@@ -16,17 +16,22 @@ namespace Pause {
         private static bool isPaused = false;
 
         [HarmonyPostfix]
-        public static void Postfix(ref bool __result ) {
+        public static void Postfix(ref bool __result, GameStateGame __instance) {
+            TimeManager tm = Planetbase.TimeManager.getInstance();
             Planetbase.ShortcutManager.getInstance().addShortcut(
                 KeyCode.Space,
                 (object parameter) => {
                     if (isPaused) {
-                        Planetbase.TimeManager.getInstance().unpause();
+                        tm.unpause();
                         isPaused = false;
+                        string msg = String.Format("{0} x{1}", StringList.get("speed_set"), tm.getTimeScale());
+                        Traverse.Create(__instance).Method("addToast").GetValue(new object[] { msg });
                     }
                     else {
-                        Planetbase.TimeManager.getInstance().pause();
+                        tm.pause();
                         isPaused = true;
+                        string msg = "Game paused";
+                        Traverse.Create(__instance).Method("addToast").GetValue(new object[] { msg });
                     }
                 },
                 true
